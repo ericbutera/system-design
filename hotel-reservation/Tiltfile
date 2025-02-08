@@ -1,0 +1,11 @@
+docker_build("gateway", "./services/gateway")
+k8s_yaml("./k8s/gateway.yaml")
+k8s_resource("gateway", port_forwards=4000)
+watch_file("./services/gateway/index.js")
+watch_file("./services/gateway/package.json")
+
+docker_build("hotel", "./services/hotel")
+k8s_yaml("./k8s/hotel.yaml")
+k8s_resource("hotel", port_forwards=5000)
+watch_file("./services/hotel/main.py")
+watch_file("./services/hotel/schema.py")
