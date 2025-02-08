@@ -1,0 +1,13 @@
+run:
+    go run server.go
+
+test:
+    go test -v ./...
+
+generate: setup
+    # gqlgen
+    go run github.com/99designs/gqlgen generate
+
+setup:
+	go get github.com/99designs/gqlgen@v0.17.64
+	go install github.com/99designs/gqlgen

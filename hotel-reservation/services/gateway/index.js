@@ -3,16 +3,16 @@ const { ApolloServer } = require("@apollo/server");
 const express = require("express");
 const { expressMiddleware } = require("@apollo/server/express4");
 
-const hotelServiceUrl = process.env.HOTEL_SERVICE_URL || "http://hotel/graphql"; // Default if env var isn't set
-
+const hotels = process.env.HOTEL_URL || "http://hotel/graphql";
+const reservations = process.env.RESERVATION_URL || "http://reservation/query";
 const app = express();
 app.use(express.json());
 
 const gateway = new ApolloGateway({
   supergraphSdl: new IntrospectAndCompose({
     subgraphs: [
-      { name: "hotel", url: hotelServiceUrl },
-      // { name: 'reservation', url: 'http://reservation/graphql' },
+      { name: "hotel", url: hotels },
+      { name: "reservation", url: reservations },
       // { name: 'payment', url: 'http://payment/graphql' }
     ],
   }),

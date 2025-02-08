@@ -1,0 +1,16 @@
+type Reservation {
+  id: ID!
+  guestName: String!
+  checkInDate: String!
+  checkOutDate: String!
+  roomType: String!
+}
+
+type Query {
+  viewReservation(id: ID!): Reservation
+  viewReservations: [Reservation!]!
+}
+
+type Mutation {
+  createReservation(guestName: String!, checkInDate: String!, checkOutDate: String!, roomType: String!): Reservation!
+}

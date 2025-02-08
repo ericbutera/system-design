@@ -1,0 +1,8 @@
+setup-asdf:
+	cut -d\  -f1 .tool-versions|grep -E '^[^#]'|xargs -L1 asdf plugin add
+	asdf install
+
+setup:
+	pre-commit install --install-hook
+	pre-commit install --hook-type commit-msg
+	@echo Ensure you run "setup-asdf" or install .tool-versions manually
