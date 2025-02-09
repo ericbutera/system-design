@@ -15,3 +15,7 @@ k8s_yaml("./k8s/reservation.yaml")
 k8s_resource("reservation", port_forwards='5001:8080')
 watch_file("./services/reservation/main.py")
 watch_file("./services/reservation/schema.py")
+
+docker_build("payment", "./services/payment")
+k8s_yaml("./k8s/payment.yaml")
+k8s_resource("payment", port_forwards='5003:8080')

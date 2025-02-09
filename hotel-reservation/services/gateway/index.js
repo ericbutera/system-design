@@ -5,6 +5,8 @@ const { expressMiddleware } = require("@apollo/server/express4");
 
 const hotels = process.env.HOTEL_URL || "http://hotel/graphql";
 const reservations = process.env.RESERVATION_URL || "http://reservation/query";
+const payments = process.env.PAYMENT_URL || "http://payment/graphql/";
+
 const app = express();
 app.use(express.json());
 
@@ -13,7 +15,7 @@ const gateway = new ApolloGateway({
     subgraphs: [
       { name: "hotel", url: hotels },
       { name: "reservation", url: reservations },
-      // { name: 'payment', url: 'http://payment/graphql' }
+      { name: "payment", url: payments },
     ],
   }),
 });
