@@ -3,6 +3,7 @@ gofumpt 0.7.0
 golang 1.23.4
 golangci-lint 1.62.0
 grpcurl 1.9.1
+helm 3.16.3
 mockery 2.47.0
 pre-commit 4.0.1
 protoc-gen-go 1.35.2

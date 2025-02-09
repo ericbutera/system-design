@@ -1,21 +1,45 @@
+load('ext://helm_resource', 'helm_resource', 'helm_repo')
+load('ext://secret', 'secret_from_dict')
+
 docker_build("gateway", "./services/gateway")
 k8s_yaml("./k8s/gateway.yaml")
-k8s_resource("gateway", port_forwards=4000)
+k8s_resource("gateway", port_forwards=4000, resource_deps=['hotel', 'reservation', 'payment'], labels=["services"])
 watch_file("./services/gateway/index.js")
 watch_file("./services/gateway/package.json")
 
 docker_build("hotel", "./services/hotel")
 k8s_yaml("./k8s/hotel.yaml")
-k8s_resource("hotel", port_forwards=5000)
+k8s_resource("hotel", port_forwards=5000, resource_deps=['pg-migrate'], labels=["services"])
 watch_file("./services/hotel/main.py")
 watch_file("./services/hotel/schema.py")
 
 docker_build("reservation", "./services/reservation")
 k8s_yaml("./k8s/reservation.yaml")
-k8s_resource("reservation", port_forwards='5001:8080')
+k8s_resource("reservation", port_forwards='5001:8080', resource_deps=['pg-migrate'], labels=["services"])
 watch_file("./services/reservation/main.py")
 watch_file("./services/reservation/schema.py")
 
 docker_build("payment", "./services/payment")
 k8s_yaml("./k8s/payment.yaml")
-k8s_resource("payment", port_forwards='5003:8080')
+k8s_resource("payment", port_forwards='5003:8080', resource_deps=['pg-migrate'], labels=["services"])
+
+# postgres & migrator
+k8s_yaml(secret_from_dict("tilt-pg", inputs = {
+    'postgres-password' : "password"
+}))
+helm_repo('bitnami', 'https://charts.bitnami.com/bitnami')
+helm_resource(
+    name='pg',
+    chart='bitnami/postgresql',
+    namespace='default',
+    flags=[
+        '--set=image.tag=15-debian-11',
+        '--set=global.postgresql.auth.existingSecret=tilt-pg',
+        # '--set=primary.persistence.enabled=false',
+    ],
+    labels=['database']
+)
+docker_build("pg-migrate-image", "migrations", dockerfile="tilt/extensions/pg/migrate.Dockerfile")
+k8s_yaml("./tilt/extensions/pg/migrate.yaml")
+k8s_resource("pg", port_forwards=["5432:5432"], labels=["database"])
+k8s_resource("pg-migrate", resource_deps=["pg"], labels=["database"])

@@ -1,0 +1,19 @@
+# https://stackoverflow.com/a/67739290/261272
+apiVersion: batch/v1
+kind: Job
+metadata:
+    labels:
+        service: pg-migrate
+    name: pg-migrate
+spec:
+    template:
+        metadata:
+            name: pg-migrate
+            labels:
+                service: pg-migrate
+        spec:
+            containers:
+                - name: pg-migrate
+                  image: pg-migrate-image
+            restartPolicy: Never
+    backoffLimit: 10
