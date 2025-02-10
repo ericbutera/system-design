@@ -1,0 +1,31 @@
+# https://golangci-lint.run/usage/linters/
+linters:
+  enable-all: true
+  disable:
+    - intrange
+    - depguard
+    - nlreturn
+    - exportloopref
+    - wsl # only one cuddle assignment allowed before range statement
+    - lll # line length limit
+    - godox
+    - godot
+    - mnd
+    - exhaustruct
+    - varnamelen
+    - paralleltest
+    - wrapcheck
+    - perfsprint
+    - tagliatelle
+
+issues:
+  exclude-rules:
+    - linters:
+        - funlen
+        - cyclop
+        - varnamelen
+        - gochecknoglobals
+      path: _test\.go$
+    - linters:
+        - forbidigo
+      path: cmd/.*\.go$
