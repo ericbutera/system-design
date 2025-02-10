@@ -16,6 +16,7 @@ app.use(express.json());
 
 class AuthenticatedDataSource extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }) {
+    // in a real system pass the JWT token to the subgraph
     request.http.headers.set("user-id", context.userId);
   }
 }
@@ -54,7 +55,7 @@ const server = new ApolloServer({
 
 // https://www.apollographql.com/docs/apollo-server/using-federation/apollo-gateway-setup#advanced-usage
 const getUserId = (token) => {
-  return "test-user-id";
+  return 1;
 };
 
 startStandaloneServer(server, {

@@ -10,23 +10,48 @@ import (
 
 type CreateReservationInput struct {
 	GuestName    string   `json:"guestName"`
+	GuestEmail   string   `json:"guestEmail"`
 	CheckInDate  string   `json:"checkInDate"`
 	CheckOutDate string   `json:"checkOutDate"`
 	RoomType     RoomType `json:"roomType"`
+	HotelID      int      `json:"hotelId"`
+	Quantity     int      `json:"quantity"`
+}
+
+type Guest struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Phone string `json:"phone"`
 }
 
 type Mutation struct {
+}
+
+type Payment struct {
+	ID       string  `json:"id"`
+	Amount   float64 `json:"amount"`
+	Currency string  `json:"currency"`
+	Status   string  `json:"status"`
 }
 
 type Query struct {
 }
 
 type Reservation struct {
-	ID           string `json:"id"`
-	GuestName    string `json:"guestName"`
-	CheckInDate  string `json:"checkInDate"`
-	CheckOutDate string `json:"checkOutDate"`
-	RoomType     string `json:"roomType"`
+	ID         string   `json:"id"`
+	Quantity   int      `json:"quantity"`
+	CheckIn    string   `json:"checkIn"`
+	CheckOut   string   `json:"checkOut"`
+	Status     string   `json:"status"`
+	RoomTypeID int      `json:"roomTypeId"`
+	HotelID    int      `json:"hotelId"`
+	PaymentID  int      `json:"paymentId"`
+	GuestID    int      `json:"guestId"`
+	RoomType   string   `json:"roomType"`
+	Guest      *Guest   `json:"guest"`
+	Payment    *Payment `json:"payment,omitempty"`
+	CreatedAt  string   `json:"createdAt"`
 }
 
 type RoomType string

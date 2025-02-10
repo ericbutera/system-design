@@ -48,9 +48,23 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	Guest struct {
+		Email func(childComplexity int) int
+		ID    func(childComplexity int) int
+		Name  func(childComplexity int) int
+		Phone func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CancelReservation func(childComplexity int, id string) int
 		CreateReservation func(childComplexity int, input model.CreateReservationInput) int
+	}
+
+	Payment struct {
+		Amount   func(childComplexity int) int
+		Currency func(childComplexity int) int
+		ID       func(childComplexity int) int
+		Status   func(childComplexity int) int
 	}
 
 	Query struct {
@@ -60,11 +74,19 @@ type ComplexityRoot struct {
 	}
 
 	Reservation struct {
-		CheckInDate  func(childComplexity int) int
-		CheckOutDate func(childComplexity int) int
-		GuestName    func(childComplexity int) int
-		ID           func(childComplexity int) int
-		RoomType     func(childComplexity int) int
+		CheckIn    func(childComplexity int) int
+		CheckOut   func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Guest      func(childComplexity int) int
+		GuestID    func(childComplexity int) int
+		HotelID    func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Payment    func(childComplexity int) int
+		PaymentID  func(childComplexity int) int
+		Quantity   func(childComplexity int) int
+		RoomType   func(childComplexity int) int
+		RoomTypeID func(childComplexity int) int
+		Status     func(childComplexity int) int
 	}
 
 	_Service struct {
@@ -100,6 +122,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Guest.email":
+		if e.complexity.Guest.Email == nil {
+			break
+		}
+
+		return e.complexity.Guest.Email(childComplexity), true
+
+	case "Guest.id":
+		if e.complexity.Guest.ID == nil {
+			break
+		}
+
+		return e.complexity.Guest.ID(childComplexity), true
+
+	case "Guest.name":
+		if e.complexity.Guest.Name == nil {
+			break
+		}
+
+		return e.complexity.Guest.Name(childComplexity), true
+
+	case "Guest.phone":
+		if e.complexity.Guest.Phone == nil {
+			break
+		}
+
+		return e.complexity.Guest.Phone(childComplexity), true
+
 	case "Mutation.cancelReservation":
 		if e.complexity.Mutation.CancelReservation == nil {
 			break
@@ -123,6 +173,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateReservation(childComplexity, args["input"].(model.CreateReservationInput)), true
+
+	case "Payment.amount":
+		if e.complexity.Payment.Amount == nil {
+			break
+		}
+
+		return e.complexity.Payment.Amount(childComplexity), true
+
+	case "Payment.currency":
+		if e.complexity.Payment.Currency == nil {
+			break
+		}
+
+		return e.complexity.Payment.Currency(childComplexity), true
+
+	case "Payment.id":
+		if e.complexity.Payment.ID == nil {
+			break
+		}
+
+		return e.complexity.Payment.ID(childComplexity), true
+
+	case "Payment.status":
+		if e.complexity.Payment.Status == nil {
+			break
+		}
+
+		return e.complexity.Payment.Status(childComplexity), true
 
 	case "Query.viewReservation":
 		if e.complexity.Query.ViewReservation == nil {
@@ -150,26 +228,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.__resolve__service(childComplexity), true
 
-	case "Reservation.checkInDate":
-		if e.complexity.Reservation.CheckInDate == nil {
+	case "Reservation.checkIn":
+		if e.complexity.Reservation.CheckIn == nil {
 			break
 		}
 
-		return e.complexity.Reservation.CheckInDate(childComplexity), true
+		return e.complexity.Reservation.CheckIn(childComplexity), true
 
-	case "Reservation.checkOutDate":
-		if e.complexity.Reservation.CheckOutDate == nil {
+	case "Reservation.checkOut":
+		if e.complexity.Reservation.CheckOut == nil {
 			break
 		}
 
-		return e.complexity.Reservation.CheckOutDate(childComplexity), true
+		return e.complexity.Reservation.CheckOut(childComplexity), true
 
-	case "Reservation.guestName":
-		if e.complexity.Reservation.GuestName == nil {
+	case "Reservation.createdAt":
+		if e.complexity.Reservation.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Reservation.GuestName(childComplexity), true
+		return e.complexity.Reservation.CreatedAt(childComplexity), true
+
+	case "Reservation.guest":
+		if e.complexity.Reservation.Guest == nil {
+			break
+		}
+
+		return e.complexity.Reservation.Guest(childComplexity), true
+
+	case "Reservation.guestId":
+		if e.complexity.Reservation.GuestID == nil {
+			break
+		}
+
+		return e.complexity.Reservation.GuestID(childComplexity), true
+
+	case "Reservation.hotelId":
+		if e.complexity.Reservation.HotelID == nil {
+			break
+		}
+
+		return e.complexity.Reservation.HotelID(childComplexity), true
 
 	case "Reservation.id":
 		if e.complexity.Reservation.ID == nil {
@@ -178,12 +277,47 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Reservation.ID(childComplexity), true
 
+	case "Reservation.payment":
+		if e.complexity.Reservation.Payment == nil {
+			break
+		}
+
+		return e.complexity.Reservation.Payment(childComplexity), true
+
+	case "Reservation.paymentId":
+		if e.complexity.Reservation.PaymentID == nil {
+			break
+		}
+
+		return e.complexity.Reservation.PaymentID(childComplexity), true
+
+	case "Reservation.quantity":
+		if e.complexity.Reservation.Quantity == nil {
+			break
+		}
+
+		return e.complexity.Reservation.Quantity(childComplexity), true
+
 	case "Reservation.roomType":
 		if e.complexity.Reservation.RoomType == nil {
 			break
 		}
 
 		return e.complexity.Reservation.RoomType(childComplexity), true
+
+	case "Reservation.roomTypeId":
+		if e.complexity.Reservation.RoomTypeID == nil {
+			break
+		}
+
+		return e.complexity.Reservation.RoomTypeID(childComplexity), true
+
+	case "Reservation.status":
+		if e.complexity.Reservation.Status == nil {
+			break
+		}
+
+		return e.complexity.Reservation.Status(childComplexity), true
 
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
@@ -569,6 +703,182 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
+func (ec *executionContext) _Guest_id(ctx context.Context, field graphql.CollectedField, obj *model.Guest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Guest_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Guest_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Guest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Guest_name(ctx context.Context, field graphql.CollectedField, obj *model.Guest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Guest_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Guest_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Guest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Guest_email(ctx context.Context, field graphql.CollectedField, obj *model.Guest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Guest_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Guest_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Guest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Guest_phone(ctx context.Context, field graphql.CollectedField, obj *model.Guest) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Guest_phone(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Phone, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Guest_phone(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Guest",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createReservation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createReservation(ctx, field)
 	if err != nil {
@@ -610,14 +920,30 @@ func (ec *executionContext) fieldContext_Mutation_createReservation(ctx context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Reservation_id(ctx, field)
-			case "guestName":
-				return ec.fieldContext_Reservation_guestName(ctx, field)
-			case "checkInDate":
-				return ec.fieldContext_Reservation_checkInDate(ctx, field)
-			case "checkOutDate":
-				return ec.fieldContext_Reservation_checkOutDate(ctx, field)
+			case "quantity":
+				return ec.fieldContext_Reservation_quantity(ctx, field)
+			case "checkIn":
+				return ec.fieldContext_Reservation_checkIn(ctx, field)
+			case "checkOut":
+				return ec.fieldContext_Reservation_checkOut(ctx, field)
+			case "status":
+				return ec.fieldContext_Reservation_status(ctx, field)
+			case "roomTypeId":
+				return ec.fieldContext_Reservation_roomTypeId(ctx, field)
+			case "hotelId":
+				return ec.fieldContext_Reservation_hotelId(ctx, field)
+			case "paymentId":
+				return ec.fieldContext_Reservation_paymentId(ctx, field)
+			case "guestId":
+				return ec.fieldContext_Reservation_guestId(ctx, field)
 			case "roomType":
 				return ec.fieldContext_Reservation_roomType(ctx, field)
+			case "guest":
+				return ec.fieldContext_Reservation_guest(ctx, field)
+			case "payment":
+				return ec.fieldContext_Reservation_payment(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Reservation_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Reservation", field.Name)
 		},
@@ -691,6 +1017,182 @@ func (ec *executionContext) fieldContext_Mutation_cancelReservation(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _Payment_id(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Payment_amount(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_amount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Amount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(float64)
+	fc.Result = res
+	return ec.marshalNFloat2float64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_amount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Float does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Payment_currency(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_currency(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Currency, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_currency(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Payment_status(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_viewReservation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_viewReservation(ctx, field)
 	if err != nil {
@@ -729,14 +1231,30 @@ func (ec *executionContext) fieldContext_Query_viewReservation(ctx context.Conte
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Reservation_id(ctx, field)
-			case "guestName":
-				return ec.fieldContext_Reservation_guestName(ctx, field)
-			case "checkInDate":
-				return ec.fieldContext_Reservation_checkInDate(ctx, field)
-			case "checkOutDate":
-				return ec.fieldContext_Reservation_checkOutDate(ctx, field)
+			case "quantity":
+				return ec.fieldContext_Reservation_quantity(ctx, field)
+			case "checkIn":
+				return ec.fieldContext_Reservation_checkIn(ctx, field)
+			case "checkOut":
+				return ec.fieldContext_Reservation_checkOut(ctx, field)
+			case "status":
+				return ec.fieldContext_Reservation_status(ctx, field)
+			case "roomTypeId":
+				return ec.fieldContext_Reservation_roomTypeId(ctx, field)
+			case "hotelId":
+				return ec.fieldContext_Reservation_hotelId(ctx, field)
+			case "paymentId":
+				return ec.fieldContext_Reservation_paymentId(ctx, field)
+			case "guestId":
+				return ec.fieldContext_Reservation_guestId(ctx, field)
 			case "roomType":
 				return ec.fieldContext_Reservation_roomType(ctx, field)
+			case "guest":
+				return ec.fieldContext_Reservation_guest(ctx, field)
+			case "payment":
+				return ec.fieldContext_Reservation_payment(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Reservation_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Reservation", field.Name)
 		},
@@ -796,14 +1314,30 @@ func (ec *executionContext) fieldContext_Query_viewReservations(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Reservation_id(ctx, field)
-			case "guestName":
-				return ec.fieldContext_Reservation_guestName(ctx, field)
-			case "checkInDate":
-				return ec.fieldContext_Reservation_checkInDate(ctx, field)
-			case "checkOutDate":
-				return ec.fieldContext_Reservation_checkOutDate(ctx, field)
+			case "quantity":
+				return ec.fieldContext_Reservation_quantity(ctx, field)
+			case "checkIn":
+				return ec.fieldContext_Reservation_checkIn(ctx, field)
+			case "checkOut":
+				return ec.fieldContext_Reservation_checkOut(ctx, field)
+			case "status":
+				return ec.fieldContext_Reservation_status(ctx, field)
+			case "roomTypeId":
+				return ec.fieldContext_Reservation_roomTypeId(ctx, field)
+			case "hotelId":
+				return ec.fieldContext_Reservation_hotelId(ctx, field)
+			case "paymentId":
+				return ec.fieldContext_Reservation_paymentId(ctx, field)
+			case "guestId":
+				return ec.fieldContext_Reservation_guestId(ctx, field)
 			case "roomType":
 				return ec.fieldContext_Reservation_roomType(ctx, field)
+			case "guest":
+				return ec.fieldContext_Reservation_guest(ctx, field)
+			case "payment":
+				return ec.fieldContext_Reservation_payment(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Reservation_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Reservation", field.Name)
 		},
@@ -1034,8 +1568,8 @@ func (ec *executionContext) fieldContext_Reservation_id(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Reservation_guestName(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Reservation_guestName(ctx, field)
+func (ec *executionContext) _Reservation_quantity(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_quantity(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1048,7 +1582,51 @@ func (ec *executionContext) _Reservation_guestName(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GuestName, nil
+		return obj.Quantity, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_quantity(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_checkIn(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_checkIn(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheckIn, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1065,7 +1643,7 @@ func (ec *executionContext) _Reservation_guestName(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Reservation_guestName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Reservation_checkIn(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Reservation",
 		Field:      field,
@@ -1078,8 +1656,8 @@ func (ec *executionContext) fieldContext_Reservation_guestName(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Reservation_checkInDate(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Reservation_checkInDate(ctx, field)
+func (ec *executionContext) _Reservation_checkOut(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_checkOut(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1092,7 +1670,7 @@ func (ec *executionContext) _Reservation_checkInDate(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CheckInDate, nil
+		return obj.CheckOut, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1109,7 +1687,7 @@ func (ec *executionContext) _Reservation_checkInDate(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Reservation_checkInDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Reservation_checkOut(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Reservation",
 		Field:      field,
@@ -1122,8 +1700,8 @@ func (ec *executionContext) fieldContext_Reservation_checkInDate(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Reservation_checkOutDate(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Reservation_checkOutDate(ctx, field)
+func (ec *executionContext) _Reservation_status(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_status(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1136,7 +1714,7 @@ func (ec *executionContext) _Reservation_checkOutDate(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CheckOutDate, nil
+		return obj.Status, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1153,7 +1731,7 @@ func (ec *executionContext) _Reservation_checkOutDate(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Reservation_checkOutDate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Reservation_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Reservation",
 		Field:      field,
@@ -1161,6 +1739,182 @@ func (ec *executionContext) fieldContext_Reservation_checkOutDate(_ context.Cont
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_roomTypeId(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_roomTypeId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RoomTypeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_roomTypeId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_hotelId(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_hotelId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.HotelID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_hotelId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_paymentId(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_paymentId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PaymentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_paymentId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_guestId(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_guestId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GuestID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_guestId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1198,6 +1952,155 @@ func (ec *executionContext) _Reservation_roomType(ctx context.Context, field gra
 }
 
 func (ec *executionContext) fieldContext_Reservation_roomType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_guest(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_guest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Guest, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Guest)
+	fc.Result = res
+	return ec.marshalNGuest2ᚖgithubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐGuest(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_guest(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Guest_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Guest_name(ctx, field)
+			case "email":
+				return ec.fieldContext_Guest_email(ctx, field)
+			case "phone":
+				return ec.fieldContext_Guest_phone(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Guest", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_payment(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_payment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Payment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Payment)
+	fc.Result = res
+	return ec.marshalOPayment2ᚖgithubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐPayment(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_payment(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Reservation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Payment_id(ctx, field)
+			case "amount":
+				return ec.fieldContext_Payment_amount(ctx, field)
+			case "currency":
+				return ec.fieldContext_Payment_currency(ctx, field)
+			case "status":
+				return ec.fieldContext_Payment_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Reservation_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Reservation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Reservation_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Reservation_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Reservation",
 		Field:      field,
@@ -3209,7 +4112,7 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"guestName", "checkInDate", "checkOutDate", "roomType"}
+	fieldsInOrder := [...]string{"guestName", "guestEmail", "checkInDate", "checkOutDate", "roomType", "hotelId", "quantity"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3223,6 +4126,13 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 				return it, err
 			}
 			it.GuestName = data
+		case "guestEmail":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("guestEmail"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GuestEmail = data
 		case "checkInDate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkInDate"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -3244,6 +4154,20 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 				return it, err
 			}
 			it.RoomType = data
+		case "hotelId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hotelId"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HotelID = data
+		case "quantity":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Quantity = data
 		}
 	}
 
@@ -3257,6 +4181,60 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
+
+var guestImplementors = []string{"Guest"}
+
+func (ec *executionContext) _Guest(ctx context.Context, sel ast.SelectionSet, obj *model.Guest) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, guestImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Guest")
+		case "id":
+			out.Values[i] = ec._Guest_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "name":
+			out.Values[i] = ec._Guest_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._Guest_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "phone":
+			out.Values[i] = ec._Guest_phone(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
 
 var mutationImplementors = []string{"Mutation"}
 
@@ -3288,6 +4266,60 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_cancelReservation(ctx, field)
 			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var paymentImplementors = []string{"Payment"}
+
+func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, obj *model.Payment) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, paymentImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Payment")
+		case "id":
+			out.Values[i] = ec._Payment_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "amount":
+			out.Values[i] = ec._Payment_amount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currency":
+			out.Values[i] = ec._Payment_currency(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._Payment_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3443,23 +4475,60 @@ func (ec *executionContext) _Reservation(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "guestName":
-			out.Values[i] = ec._Reservation_guestName(ctx, field, obj)
+		case "quantity":
+			out.Values[i] = ec._Reservation_quantity(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "checkInDate":
-			out.Values[i] = ec._Reservation_checkInDate(ctx, field, obj)
+		case "checkIn":
+			out.Values[i] = ec._Reservation_checkIn(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "checkOutDate":
-			out.Values[i] = ec._Reservation_checkOutDate(ctx, field, obj)
+		case "checkOut":
+			out.Values[i] = ec._Reservation_checkOut(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._Reservation_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "roomTypeId":
+			out.Values[i] = ec._Reservation_roomTypeId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hotelId":
+			out.Values[i] = ec._Reservation_hotelId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "paymentId":
+			out.Values[i] = ec._Reservation_paymentId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "guestId":
+			out.Values[i] = ec._Reservation_guestId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "roomType":
 			out.Values[i] = ec._Reservation_roomType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "guest":
+			out.Values[i] = ec._Reservation_guest(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "payment":
+			out.Values[i] = ec._Reservation_payment(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Reservation_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3892,6 +4961,31 @@ func (ec *executionContext) marshalNFieldSet2string(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) (float64, error) {
+	res, err := graphql.UnmarshalFloatContext(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	res := graphql.MarshalFloatContext(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return graphql.WrapContextMarshaler(ctx, res)
+}
+
+func (ec *executionContext) marshalNGuest2ᚖgithubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐGuest(ctx context.Context, sel ast.SelectionSet, v *model.Guest) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Guest(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3899,6 +4993,21 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (str
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v any) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -4429,6 +5538,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOPayment2ᚖgithubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐPayment(ctx context.Context, sel ast.SelectionSet, v *model.Payment) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Payment(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOReservation2ᚖgithubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐReservation(ctx context.Context, sel ast.SelectionSet, v *model.Reservation) graphql.Marshaler {

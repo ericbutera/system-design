@@ -7,9 +7,14 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
+
+	// gMiddleware "github.com/ericbutera/system-design/hotel-reservation/services/reservation/middleware"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/auth"
-	"github.com/go-chi/chi"
+	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/internal/db"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5"
+	"github.com/samber/lo"
 )
 
 const defaultPort = "8080"
@@ -21,9 +26,16 @@ func main() {
 	}
 
 	router := chi.NewRouter()
+	router.Use(middleware.Logger)
+	router.Use(middleware.Recoverer)
 	router.Use(auth.Middleware())
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	db := lo.Must(db.New(db.NewDefaultConfig()))
+	// TODO: dataloader router.Use(gMiddleware.DataloaderMiddleware(db))
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
+		DB: db,
+	}}))
 	srv.AddTransport(transport.POST{})
 	router.Handle("/query", srv)
 

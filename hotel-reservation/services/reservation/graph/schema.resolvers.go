@@ -8,8 +8,10 @@ import (
 	"context"
 	"fmt"
 
-	// "github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/auth"
+	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/auth"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/model"
+	dbModel "github.com/ericbutera/system-design/hotel-reservation/services/reservation/internal/db/model"
+	"github.com/samber/lo"
 )
 
 // CreateReservation is the resolver for the createReservation field.
@@ -31,12 +33,31 @@ func (r *queryResolver) ViewReservation(ctx context.Context, id string) (*model.
 
 // ViewReservations is the resolver for the viewReservations field.
 func (r *queryResolver) ViewReservations(ctx context.Context) ([]*model.Reservation, error) {
-	// user := auth.ForContext(ctx)
-	return []*model.Reservation{
-		{
-			ID: "1",
-		},
-	}, nil
+	var data []*dbModel.Reservation
+	user := auth.ForContext(ctx)
+	res := r.DB.Where("guest_id = ?", user.ID).
+		Find(&data)
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	results := make([]*model.Reservation, len(data))
+	for i, row := range data {
+		results[i] = &model.Reservation{
+			ID:         fmt.Sprintf("%d", row.ID),
+			CheckIn:    row.CheckIn.Format("2006-01-02"),
+			CheckOut:   row.CheckOut.Format("2006-01-02"),
+			Status:     row.Status,
+			Quantity:   row.Quantity,
+			RoomTypeID: row.RoomTypeID,
+			HotelID:    row.HotelID,
+			PaymentID:  lo.FromPtr(row.PaymentID),
+			GuestID:    row.GuestID,
+		}
+	}
+
+	return results, nil
 }
 
 // Mutation returns MutationResolver implementation.
