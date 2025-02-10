@@ -11,6 +11,22 @@ type Query {
   viewReservations: [Reservation!]!
 }
 
+# TODO: look up how to share enum between federated graphs
+enum RoomType {
+  SINGLE
+  DOUBLE
+  SUITE
+  PENTHOUSE
+}
+
+input CreateReservationInput {
+  guestName: String!
+  checkInDate: String!
+  checkOutDate: String!
+  roomType: RoomType!
+}
+
 type Mutation {
-  createReservation(guestName: String!, checkInDate: String!, checkOutDate: String!, roomType: String!): Reservation!
+  createReservation(input: CreateReservationInput!): Reservation!
+  cancelReservation(id: ID!): Boolean!
 }

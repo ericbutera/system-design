@@ -4,6 +4,7 @@ go 1.23.4
 
 require (
 	github.com/99designs/gqlgen v0.17.64
+	github.com/go-chi/chi v1.5.5
 	github.com/vektah/gqlparser/v2 v2.5.22
 )
 
