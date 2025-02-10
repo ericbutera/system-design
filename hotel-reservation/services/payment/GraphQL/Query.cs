@@ -2,14 +2,30 @@ namespace Payment.GraphQL
 {
     public class Query
     {
-        public Transaction GetTransaction(Guid id) =>
-            new Transaction
+        private readonly ApplicationDbContext _context;
+
+        public Query(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        public Transaction GetTransaction(Guid id)
+        {
+            var payment = _context.Payments.Find(id);
+            if (payment == null)
             {
-                Id = id.ToString(),
-                Status = "Success",
-                Amount = 100,
-                Timestamp = DateTime.UtcNow,
-                ReservationId = "123"
+                throw new InvalidOperationException("Payment not found.");
+            }
+
+            return new Transaction
+            {
+                Id = payment.Id.ToString(),
+                Amount = payment.Amount,
+                CorrelationId = payment.CorrelationId,
+                TransactionId = payment.TransactionId ?? string.Empty,
+                CreatedAt = payment.CreatedAt,
             };
+        }
+
     }
 }

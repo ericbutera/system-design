@@ -1,24 +1,35 @@
+using Microsoft.EntityFrameworkCore;
+using Payment.Service;
+
 namespace Payment.GraphQL
 {
     public class Mutation
     {
-        private readonly List<Transaction> _transactions = new List<Transaction>();
+        private readonly IPaymentService _paymentService;
 
-        public Transaction Charge(Transaction transaction)
+        public Mutation(IPaymentService paymentService)
         {
-            // validation
-            if (transaction.Amount <= 0)
+            _paymentService = paymentService;
+        }
+
+        public async Task<Transaction> Charge(ChargeInput charge)
+        {
+            var payment = new Models.Payment
             {
-                throw new ArgumentException("Amount must be greater than zero.");
-            }
+                Amount = charge.Amount,
+                CorrelationId = charge.CorrelationId,
+            };
 
-            // var paymentResult = _paymentGateway.Charge(amount, ...);
+            payment = await _paymentService.Charge(payment);
 
-            transaction.Id = Guid.NewGuid().ToString(); // TODO: paymentresult.transactionId
-
-            _transactions.Add(transaction);
-
-            return transaction;
+            return new Transaction
+            {
+                Id = payment.Id.ToString(),
+                Amount = payment.Amount,
+                CorrelationId = payment.CorrelationId,
+                TransactionId = payment.TransactionId ?? string.Empty,
+                CreatedAt = payment.CreatedAt,
+            };
         }
     }
 }

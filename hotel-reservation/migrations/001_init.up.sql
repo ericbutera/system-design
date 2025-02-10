@@ -29,8 +29,8 @@ CREATE TABLE
         correlation_id VARCHAR(128) NOT NULL, -- reservation id
         transaction_id VARCHAR(255) NOT NULL, -- transaction id from the payment gateway
         amount DECIMAL(10, 2) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        -- TODO: currency column (you can add a currency column if needed)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT unique_payment UNIQUE (correlation_id)
     );
 
 CREATE TABLE
