@@ -33,6 +33,8 @@ const gateway = new ApolloGateway({
   buildService({ name, url }) {
     return new AuthenticatedDataSource({ url });
   },
+  serviceHealthCheck: true,
+  pollIntervalInMs: 30_000, // 30 seconds
 });
 
 const reqPlugin = {

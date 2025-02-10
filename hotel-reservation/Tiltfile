@@ -35,7 +35,7 @@ helm_resource(
     flags=[
         '--set=image.tag=15-debian-11',
         '--set=global.postgresql.auth.existingSecret=tilt-pg',
-        # '--set=primary.persistence.enabled=false',
+        '--set=primary.persistence.enabled=false',
     ],
     labels=['database']
 )
