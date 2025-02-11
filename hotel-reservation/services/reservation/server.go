@@ -34,8 +34,11 @@ func main() {
 	db := lo.Must(db.New(db.NewDefaultConfig()))
 	// TODO: dataloader router.Use(gMiddleware.DataloaderMiddleware(db))
 
+	reservations := reservations.New(db)
+	reservations.CreateInventory() // TODO extract to job
+
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		Reservations: reservations.New(db),
+		Reservations: reservations,
 	}}))
 	srv.AddTransport(transport.POST{})
 	router.Handle("/query", srv)
