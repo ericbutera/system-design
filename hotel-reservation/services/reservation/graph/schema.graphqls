@@ -33,22 +33,16 @@ type Query {
   viewReservations: [Reservation!]!
 }
 
-# TODO: look up how to share enum between federated graphs
-enum RoomType {
-  SINGLE
-  DOUBLE
-  SUITE
-  PENTHOUSE
-}
 
 input CreateReservationInput {
-  guestName: String!
-  guestEmail: String!
+  # TODO: future support guest checkout
+  # guestName: String!
+  # guestEmail: String!
   checkInDate: String!
   checkOutDate: String!
-  roomType: RoomType!
-  hotelId: Int!
+  roomTypeId: Int! # RoomType!
   quantity: Int!
+  hotelId: Int!
 }
 
 type Mutation {

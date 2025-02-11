@@ -12,6 +12,7 @@ import (
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/auth"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/internal/db"
+	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/internal/reservations"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/samber/lo"
@@ -34,7 +35,7 @@ func main() {
 	// TODO: dataloader router.Use(gMiddleware.DataloaderMiddleware(db))
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{
-		DB: db,
+		Reservations: reservations.New(db),
 	}}))
 	srv.AddTransport(transport.POST{})
 	router.Handle("/query", srv)

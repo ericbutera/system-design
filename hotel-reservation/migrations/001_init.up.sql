@@ -62,5 +62,6 @@ CREATE TABLE
         date DATE,
         total_inventory INT,
         total_reserved INT,
-        PRIMARY KEY (hotel_id, room_type_id, date)
+        PRIMARY KEY (hotel_id, room_type_id, date),
+        CONSTRAINT check_room_count CHECK ((total_inventory - total_reserved) >= 0)
     );

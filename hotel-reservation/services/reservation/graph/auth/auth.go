@@ -4,6 +4,7 @@ package auth
 import (
 	"context"
 	"net/http"
+	"strconv"
 )
 
 // A private key for context that only this package can access. This is important
@@ -16,7 +17,7 @@ type contextKey struct {
 
 // A stand-in for our database backed user object
 type User struct {
-	ID   string
+	ID   int
 	Name string
 }
 
@@ -24,10 +25,10 @@ type User struct {
 func Middleware() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			userID := r.Header.Get("user-id")
-			user := getUserByID(userID)
-			ctx := context.WithValue(r.Context(), userCtxKey, user)
-			r = r.WithContext(ctx)
+			if user, err := getUserByID(r.Header.Get("user-id")); err == nil {
+				ctx := context.WithValue(r.Context(), userCtxKey, user)
+				r = r.WithContext(ctx)
+			}
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -43,10 +44,13 @@ func validateAndGetUserID(c *http.Cookie) (string, error) {
 	return c.Value, nil
 }
 
-func getUserByID(id string) *User {
-	// TODO: look up from auth service
-	return &User{
-		ID:   id,
-		Name: "user",
+func getUserByID(id string) (*User, error) {
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return nil, err
 	}
+	return &User{
+		ID:   idInt,
+		Name: "user",
+	}, nil
 }

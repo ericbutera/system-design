@@ -2,20 +2,12 @@
 
 package model
 
-import (
-	"fmt"
-	"io"
-	"strconv"
-)
-
 type CreateReservationInput struct {
-	GuestName    string   `json:"guestName"`
-	GuestEmail   string   `json:"guestEmail"`
-	CheckInDate  string   `json:"checkInDate"`
-	CheckOutDate string   `json:"checkOutDate"`
-	RoomType     RoomType `json:"roomType"`
-	HotelID      int      `json:"hotelId"`
-	Quantity     int      `json:"quantity"`
+	CheckInDate  string `json:"checkInDate"`
+	CheckOutDate string `json:"checkOutDate"`
+	RoomTypeID   int    `json:"roomTypeId"`
+	Quantity     int    `json:"quantity"`
+	HotelID      int    `json:"hotelId"`
 }
 
 type Guest struct {
@@ -52,49 +44,4 @@ type Reservation struct {
 	Guest      *Guest   `json:"guest"`
 	Payment    *Payment `json:"payment,omitempty"`
 	CreatedAt  string   `json:"createdAt"`
-}
-
-type RoomType string
-
-const (
-	RoomTypeSingle    RoomType = "SINGLE"
-	RoomTypeDouble    RoomType = "DOUBLE"
-	RoomTypeSuite     RoomType = "SUITE"
-	RoomTypePenthouse RoomType = "PENTHOUSE"
-)
-
-var AllRoomType = []RoomType{
-	RoomTypeSingle,
-	RoomTypeDouble,
-	RoomTypeSuite,
-	RoomTypePenthouse,
-}
-
-func (e RoomType) IsValid() bool {
-	switch e {
-	case RoomTypeSingle, RoomTypeDouble, RoomTypeSuite, RoomTypePenthouse:
-		return true
-	}
-	return false
-}
-
-func (e RoomType) String() string {
-	return string(e)
-}
-
-func (e *RoomType) UnmarshalGQL(v any) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = RoomType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid RoomType", str)
-	}
-	return nil
-}
-
-func (e RoomType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -11,12 +11,35 @@ import (
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/auth"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/model"
 	dbModel "github.com/ericbutera/system-design/hotel-reservation/services/reservation/internal/db/model"
+	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/internal/reservations"
 	"github.com/samber/lo"
 )
 
 // CreateReservation is the resolver for the createReservation field.
 func (r *mutationResolver) CreateReservation(ctx context.Context, input model.CreateReservationInput) (*model.Reservation, error) {
-	panic(fmt.Errorf("not implemented: CreateReservation - createReservation"))
+	// TODO: support guest checkout (guestName, guestEmail)
+	user := auth.ForContext(ctx) // only logged in users can create reservations
+	reservation, err := r.Reservations.Create(ctx, &dbModel.Reservation{
+		CheckIn:    reservations.TimeFromString(input.CheckInDate),
+		CheckOut:   reservations.TimeFromString(input.CheckOutDate),
+		Status:     "PENDING",
+		Quantity:   input.Quantity,
+		RoomTypeID: input.RoomTypeID,
+		HotelID:    input.HotelID,
+		GuestID:    user.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.Reservation{
+		ID:         fmt.Sprintf("%d", reservation.ID),
+		CheckIn:    reservations.TimeToString(reservation.CheckIn),
+		CheckOut:   reservations.TimeToString(reservation.CheckOut),
+		Status:     reservation.Status,
+		Quantity:   reservation.Quantity, // TODO: if payment fails we need to rollback the inventory
+		RoomTypeID: reservation.RoomTypeID,
+		HotelID:    reservation.HotelID,
+	}, nil
 }
 
 // CancelReservation is the resolver for the cancelReservation field.
@@ -26,28 +49,37 @@ func (r *mutationResolver) CancelReservation(ctx context.Context, id string) (bo
 
 // ViewReservation is the resolver for the viewReservation field.
 func (r *queryResolver) ViewReservation(ctx context.Context, id string) (*model.Reservation, error) {
+	user := auth.ForContext(ctx)
+	reservation, err := r.Reservations.GetByID(ctx, id, user.ID)
+	if err != nil {
+		return nil, err
+	}
 	return &model.Reservation{
-		ID: "1",
+		ID:         fmt.Sprintf("%d", reservation.ID),
+		CheckIn:    reservation.CheckIn.Format("2006-01-02"),
+		CheckOut:   reservation.CheckOut.Format("2006-01-02"),
+		Status:     reservation.Status,
+		Quantity:   reservation.Quantity,
+		RoomTypeID: reservation.RoomTypeID,
+		HotelID:    reservation.HotelID,
+		GuestID:    reservation.GuestID,
+		PaymentID:  lo.FromPtr(reservation.PaymentID),
 	}, nil
 }
 
 // ViewReservations is the resolver for the viewReservations field.
 func (r *queryResolver) ViewReservations(ctx context.Context) ([]*model.Reservation, error) {
-	var data []*dbModel.Reservation
 	user := auth.ForContext(ctx)
-	res := r.DB.Where("guest_id = ?", user.ID).
-		Find(&data)
-
-	if res.Error != nil {
-		return nil, res.Error
+	data, err := r.Reservations.GetByUser(ctx, user.ID)
+	if err != nil {
+		return nil, err
 	}
-
 	results := make([]*model.Reservation, len(data))
 	for i, row := range data {
 		results[i] = &model.Reservation{
 			ID:         fmt.Sprintf("%d", row.ID),
-			CheckIn:    row.CheckIn.Format("2006-01-02"),
-			CheckOut:   row.CheckOut.Format("2006-01-02"),
+			CheckIn:    reservations.TimeToString(row.CheckIn),
+			CheckOut:   reservations.TimeToString(row.CheckOut),
 			Status:     row.Status,
 			Quantity:   row.Quantity,
 			RoomTypeID: row.RoomTypeID,

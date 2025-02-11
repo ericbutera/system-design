@@ -4112,27 +4112,13 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"guestName", "guestEmail", "checkInDate", "checkOutDate", "roomType", "hotelId", "quantity"}
+	fieldsInOrder := [...]string{"checkInDate", "checkOutDate", "roomTypeId", "quantity", "hotelId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "guestName":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("guestName"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.GuestName = data
-		case "guestEmail":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("guestEmail"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.GuestEmail = data
 		case "checkInDate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("checkInDate"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -4147,20 +4133,13 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 				return it, err
 			}
 			it.CheckOutDate = data
-		case "roomType":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomType"))
-			data, err := ec.unmarshalNRoomType2githubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐRoomType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RoomType = data
-		case "hotelId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hotelId"))
+		case "roomTypeId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomTypeId"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.HotelID = data
+			it.RoomTypeID = data
 		case "quantity":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
@@ -4168,6 +4147,13 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 				return it, err
 			}
 			it.Quantity = data
+		case "hotelId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hotelId"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HotelID = data
 		}
 	}
 
@@ -5072,16 +5058,6 @@ func (ec *executionContext) marshalNReservation2ᚖgithubᚗcomᚋericbuteraᚋs
 		return graphql.Null
 	}
 	return ec._Reservation(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNRoomType2githubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐRoomType(ctx context.Context, v any) (model.RoomType, error) {
-	var res model.RoomType
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNRoomType2githubᚗcomᚋericbuteraᚋsystemᚑdesignᚋhotelᚑreservationᚋservicesᚋreservationᚋgraphᚋmodelᚐRoomType(ctx context.Context, sel ast.SelectionSet, v model.RoomType) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) (string, error) {
