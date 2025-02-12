@@ -14,26 +14,25 @@ export interface HotelById {
   rooms: Room[];
 }
 
+const FETCH_HOTEL = gql`
+  query HotelById($id: Int!) {
+    hotelById(id: $id) {
+      id
+      name
+      location
+      rooms {
+        id
+        number
+        hotelId
+      }
+    }
+  }
+`;
 export async function fetchHotel(id: number): Promise<HotelById> {
   const client = createApolloClient();
   const { data } = await client.query({
-    query: gql`
-      query HotelById($id: Int!) {
-        hotelById(id: $id) {
-          id
-          name
-          location
-          rooms {
-            id
-            number
-            hotelId
-          }
-        }
-      }
-    `,
-    variables: {
-      id: id,
-    },
+    query: FETCH_HOTEL,
+    variables: { id: id },
   });
   return data.hotelById;
 }
@@ -44,18 +43,19 @@ export interface Hotel {
   location: string;
 }
 
+const FETCH_HOTELS = gql`
+  query Hotels {
+    hotels {
+      id
+      name
+      location
+    }
+  }
+`;
 export async function fetchHotels(): Promise<Hotel[]> {
   const client = createApolloClient();
   const { data } = await client.query({
-    query: gql`
-      query Hotels {
-        hotels {
-          id
-          name
-          location
-        }
-      }
-    `,
+    query: FETCH_HOTELS,
   });
   return data.hotels;
 }
@@ -142,28 +142,54 @@ export interface Reservation {
   createdAt: string;
 }
 
+const VIEW_RESERVATION = gql`
+  query ViewReservation($id: ID!) {
+    viewReservation(id: $id) {
+      id
+      quantity
+      checkIn
+      checkOut
+      status
+      roomTypeId
+      hotelId
+      paymentId
+      guestId
+      roomType
+    }
+  }
+`;
 export async function fetchReservation(id: number): Promise<Reservation> {
   const client = createApolloClient();
   const { data } = await client.query({
-    query: gql`
-      query ViewReservation {
-        viewReservation(id: "2") {
-          id
-          quantity
-          checkIn
-          checkOut
-          status
-          roomTypeId
-          hotelId
-          paymentId
-          guestId
-          roomType
-        }
-      }
-    `,
+    query: VIEW_RESERVATION,
     variables: {
       id: id.toString(),
     },
   });
   return data.viewReservation;
+}
+
+const VIEW_RESERVATIONS = gql`
+  query ViewReservations {
+    viewReservations {
+      id
+      quantity
+      checkIn
+      checkOut
+      status
+      roomTypeId
+      paymentId
+      guestId
+      roomType
+      createdAt
+      hotelId
+    }
+  }
+`;
+export async function fetchReservations(): Promise<Reservation[]> {
+  const client = createApolloClient();
+  const { data } = await client.query({
+    query: VIEW_RESERVATIONS,
+  });
+  return data.viewReservations;
 }
