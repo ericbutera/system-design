@@ -23,6 +23,11 @@ docker_build("payment", "./services/payment")
 k8s_yaml("./k8s/payment.yaml")
 k8s_resource("payment", port_forwards='5003:8080', resource_deps=['pg-migrate'], labels=["services"])
 
+docker_build("ui-image", context="./ui", live_update=[sync("./ui", "/usr/src/app")], dockerfile="ui/Dockerfile")
+k8s_yaml("./k8s/ui.yaml")
+k8s_resource("ui", port_forwards=[port_forward(3000, 3000, "ui")], labels=["ui"])
+
+
 # postgres & migrator
 k8s_yaml(secret_from_dict("tilt-pg", inputs = {
     'postgres-password' : "password"

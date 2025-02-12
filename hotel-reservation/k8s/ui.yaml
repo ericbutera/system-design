@@ -1,0 +1,21 @@
+# TODO: helm chart w/ values.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  labels:
+    app: ui
+spec:
+  selector:
+    matchLabels:
+      app: ui
+  template:
+    metadata:
+      labels:
+        app: ui
+    spec:
+      containers:
+        - name: ui
+          image: ui-image
+          ports:
+            - containerPort: 3000
