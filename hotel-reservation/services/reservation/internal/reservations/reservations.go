@@ -19,6 +19,13 @@ var (
 	ErrNotEnoughInventory = errors.New("Not enough inventory")
 )
 
+type Status string
+
+const StatusPending Status = "PENDING"
+const StatusConfirmed Status = "CONFIRMED"
+const StatusCancelled Status = "CANCELLED"
+const StatusRefunded Status = "REFUNDED"
+
 type Reservations struct {
 	db *gorm.DB
 }
@@ -144,6 +151,7 @@ func TimeToString(t time.Time) string {
 
 func ReservationToDb(r *graphModel.Reservation) *dbModel.Reservation {
 	id, _ := strconv.Atoi(r.ID)
+	hotelId, _ := strconv.Atoi(r.HotelID)
 	return &dbModel.Reservation{
 		ID:         id,
 		RoomTypeID: r.RoomTypeID,
@@ -152,7 +160,7 @@ func ReservationToDb(r *graphModel.Reservation) *dbModel.Reservation {
 		CheckOut:   TimeFromString(r.CheckOut),
 		Status:     r.Status,
 		GuestID:    r.GuestID,
-		HotelID:    r.HotelID,
+		HotelID:    hotelId,
 		PaymentID:  nil,
 	}
 }
@@ -166,6 +174,6 @@ func ReservationToGraph(r *dbModel.Reservation) *graphModel.Reservation {
 		CheckOut:   TimeToString(r.CheckOut),
 		Status:     r.Status,
 		GuestID:    r.GuestID,
-		HotelID:    r.HotelID,
+		HotelID:    strconv.Itoa(r.HotelID),
 	}
 }

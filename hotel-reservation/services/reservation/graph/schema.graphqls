@@ -5,13 +5,13 @@ type Reservation {
   checkOut: String!
   status: String!
   roomTypeId: Int!
-  hotelId: Int!
   paymentId: Int!
   guestId: Int!
   roomType: String!
   guest: Guest!
   payment: Payment
   createdAt: String!
+  hotelId: ID!
 }
 
 type Guest {
@@ -29,7 +29,7 @@ type Payment {
 }
 
 type Query {
-  viewReservation(id: ID!): Reservation
+  viewReservation(id: ID!): Reservation!
   viewReservations: [Reservation!]!
 }
 

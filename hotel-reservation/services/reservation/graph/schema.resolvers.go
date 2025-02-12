@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/auth"
 	"github.com/ericbutera/system-design/hotel-reservation/services/reservation/graph/model"
@@ -22,7 +23,7 @@ func (r *mutationResolver) CreateReservation(ctx context.Context, input model.Cr
 	reservation, err := r.Reservations.Create(ctx, &dbModel.Reservation{
 		CheckIn:    reservations.TimeFromString(input.CheckInDate),
 		CheckOut:   reservations.TimeFromString(input.CheckOutDate),
-		Status:     "PENDING",
+		Status:     string(reservations.StatusPending),
 		Quantity:   input.Quantity,
 		RoomTypeID: input.RoomTypeID,
 		HotelID:    input.HotelID,
@@ -32,13 +33,13 @@ func (r *mutationResolver) CreateReservation(ctx context.Context, input model.Cr
 		return nil, err
 	}
 	return &model.Reservation{
-		ID:         fmt.Sprintf("%d", reservation.ID),
+		ID:         strconv.Itoa(reservation.ID),
 		CheckIn:    reservations.TimeToString(reservation.CheckIn),
 		CheckOut:   reservations.TimeToString(reservation.CheckOut),
 		Status:     reservation.Status,
 		Quantity:   reservation.Quantity, // TODO: if payment fails we need to rollback the inventory
 		RoomTypeID: reservation.RoomTypeID,
-		HotelID:    reservation.HotelID,
+		HotelID:    strconv.Itoa(reservation.HotelID),
 	}, nil
 }
 
@@ -55,13 +56,13 @@ func (r *queryResolver) ViewReservation(ctx context.Context, id string) (*model.
 		return nil, err
 	}
 	return &model.Reservation{
-		ID:         fmt.Sprintf("%d", reservation.ID),
+		ID:         strconv.Itoa(reservation.ID),
 		CheckIn:    reservation.CheckIn.Format("2006-01-02"),
 		CheckOut:   reservation.CheckOut.Format("2006-01-02"),
 		Status:     reservation.Status,
 		Quantity:   reservation.Quantity,
 		RoomTypeID: reservation.RoomTypeID,
-		HotelID:    reservation.HotelID,
+		HotelID:    strconv.Itoa(reservation.HotelID),
 		GuestID:    reservation.GuestID,
 		PaymentID:  lo.FromPtr(reservation.PaymentID),
 	}, nil
@@ -77,13 +78,13 @@ func (r *queryResolver) ViewReservations(ctx context.Context) ([]*model.Reservat
 	results := make([]*model.Reservation, len(data))
 	for i, row := range data {
 		results[i] = &model.Reservation{
-			ID:         fmt.Sprintf("%d", row.ID),
+			ID:         strconv.Itoa(row.ID),
 			CheckIn:    reservations.TimeToString(row.CheckIn),
 			CheckOut:   reservations.TimeToString(row.CheckOut),
 			Status:     row.Status,
 			Quantity:   row.Quantity,
 			RoomTypeID: row.RoomTypeID,
-			HotelID:    row.HotelID,
+			HotelID:    strconv.Itoa(row.HotelID),
 			PaymentID:  lo.FromPtr(row.PaymentID),
 			GuestID:    row.GuestID,
 		}

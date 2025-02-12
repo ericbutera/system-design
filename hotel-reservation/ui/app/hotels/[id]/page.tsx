@@ -11,7 +11,7 @@ export default async function HotelDetailsPage({
   params: Promise<Params>;
 }) {
   const hotelId = (await params).id;
-  const hotel = await fetchHotel(hotelId);
+  const hotel = await fetchHotel(Number(hotelId));
 
   return (
     <div className="p-4">

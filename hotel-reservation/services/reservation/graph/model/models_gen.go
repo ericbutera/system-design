@@ -37,11 +37,11 @@ type Reservation struct {
 	CheckOut   string   `json:"checkOut"`
 	Status     string   `json:"status"`
 	RoomTypeID int      `json:"roomTypeId"`
-	HotelID    int      `json:"hotelId"`
 	PaymentID  int      `json:"paymentId"`
 	GuestID    int      `json:"guestId"`
 	RoomType   string   `json:"roomType"`
 	Guest      *Guest   `json:"guest"`
 	Payment    *Payment `json:"payment,omitempty"`
 	CreatedAt  string   `json:"createdAt"`
+	HotelID    string   `json:"hotelId"`
 }

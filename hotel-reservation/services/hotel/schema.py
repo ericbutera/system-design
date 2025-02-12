@@ -7,14 +7,14 @@ from strawberry.federation import Schema
 
 @strawberry.federation.type(keys=["id"])
 class Room:
-    id: int
+    id: strawberry.ID
     number: str
     hotel_id: int
 
 
 @strawberry.federation.type(keys=["id"])
 class Hotel:
-    id: int
+    id: strawberry.ID
     name: str
     location: str
 
@@ -36,7 +36,7 @@ class Query:
         return [Hotel(id=h.id, name=h.name, location=h.location) for h in hotels]
 
     @strawberry.field
-    def hotel_by_id(self, info: strawberry.Info, id: int) -> Optional[Hotel]:
+    def hotel_by_id(self, info: strawberry.Info, id: strawberry.ID) -> Optional[Hotel]:
         db = info.context["db"]
         h = db.query(HotelModel).filter(HotelModel.id == id).first()
         if h:

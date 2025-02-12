@@ -1,17 +1,16 @@
-"use client";
+import { fetchHotels } from "@/app/data/fetcher";
+import Link from "next/link";
 
-export default function HotelsList({
-  hotels,
-}: {
-  hotels: { id: string; name: string; location: string }[];
-}) {
+export default async function HotelsList() {
+  const hotels = await fetchHotels();
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold">Hotels</h1>
       <ul>
         {hotels.map((hotel) => (
           <li key={hotel.id} className="p-2 border-b">
-            {hotel.name} - {hotel.location}
+            <Link href={`/hotels/${hotel.id}`}>
+              {hotel.name}: {hotel.location}
+            </Link>
           </li>
         ))}
       </ul>

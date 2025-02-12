@@ -1,8 +1,8 @@
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
-const createApolloClient = () => {
+const createApolloClient = (url?: string) => {
   return new ApolloClient({
-    uri: "http://gateway/graphql",
+    uri: url ?? "http://gateway/graphql",
     cache: new InMemoryCache(),
   });
 };
