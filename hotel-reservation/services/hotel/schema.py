@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import strawberry
 from models import HotelModel, RoomModel
@@ -34,6 +34,14 @@ class Query:
         db = info.context["db"]
         hotels = db.query(HotelModel).all()
         return [Hotel(id=h.id, name=h.name, location=h.location) for h in hotels]
+
+    @strawberry.field
+    def hotel_by_id(self, info: strawberry.Info, id: int) -> Optional[Hotel]:
+        db = info.context["db"]
+        h = db.query(HotelModel).filter(HotelModel.id == id).first()
+        if h:
+            return Hotel(id=h.id, name=h.name, location=h.location)
+        return None
 
 
 schema = Schema(query=Query)
