@@ -1773,9 +1773,9 @@ func (ec *executionContext) _Reservation_roomTypeId(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Reservation_roomTypeId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1785,7 +1785,7 @@ func (ec *executionContext) fieldContext_Reservation_roomTypeId(_ context.Contex
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1817,9 +1817,9 @@ func (ec *executionContext) _Reservation_paymentId(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Reservation_paymentId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1829,7 +1829,7 @@ func (ec *executionContext) fieldContext_Reservation_paymentId(_ context.Context
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1861,9 +1861,9 @@ func (ec *executionContext) _Reservation_guestId(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Reservation_guestId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1873,7 +1873,7 @@ func (ec *executionContext) fieldContext_Reservation_guestId(_ context.Context, 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4138,7 +4138,7 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 			it.CheckOutDate = data
 		case "roomTypeId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("roomTypeId"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
+			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -4152,7 +4152,7 @@ func (ec *executionContext) unmarshalInputCreateReservationInput(ctx context.Con
 			it.Quantity = data
 		case "hotelId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hotelId"))
-			data, err := ec.unmarshalNInt2int(ctx, v)
+			data, err := ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

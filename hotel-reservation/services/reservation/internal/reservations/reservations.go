@@ -115,6 +115,23 @@ func (r *Reservations) updateInventory(tx *gorm.DB, reservation *dbModel.Reserva
 	return nil
 }
 
+func (r *Reservations) Availability(ctx context.Context, hotelID int, roomTypeID int, checkIn time.Time, checkOut time.Time) (int, error) {
+	const sql = `
+	SELECT total_inventory - total_reserved AS available
+	FROM room_type_inventory
+	WHERE
+		hotel_id = ? AND
+		room_type_id = ? AND
+		date BETWEEN ? AND ?
+	`
+	var available int
+	res := r.db.Raw(sql, hotelID, roomTypeID, TimeToString(checkIn), TimeToString(checkOut)).Scan(&available)
+	if res.Error != nil {
+		return 0, res.Error
+	}
+	return available, nil
+}
+
 func (r *Reservations) CreateInventory() error {
 	sql := `
 	WITH RECURSIVE DateSeries AS (
@@ -152,14 +169,16 @@ func TimeToString(t time.Time) string {
 func ReservationToDb(r *graphModel.Reservation) *dbModel.Reservation {
 	id, _ := strconv.Atoi(r.ID)
 	hotelId, _ := strconv.Atoi(r.HotelID)
+	roomTypeID, _ := strconv.Atoi(r.RoomTypeID)
+	guestID, _ := strconv.Atoi(r.GuestID)
 	return &dbModel.Reservation{
 		ID:         id,
-		RoomTypeID: r.RoomTypeID,
+		RoomTypeID: roomTypeID,
 		Quantity:   r.Quantity,
 		CheckIn:    TimeFromString(r.CheckIn),
 		CheckOut:   TimeFromString(r.CheckOut),
 		Status:     r.Status,
-		GuestID:    r.GuestID,
+		GuestID:    guestID,
 		HotelID:    hotelId,
 		PaymentID:  nil,
 	}
@@ -168,12 +187,12 @@ func ReservationToDb(r *graphModel.Reservation) *dbModel.Reservation {
 func ReservationToGraph(r *dbModel.Reservation) *graphModel.Reservation {
 	return &graphModel.Reservation{
 		ID:         strconv.Itoa(r.ID),
-		RoomTypeID: r.RoomTypeID,
+		RoomTypeID: strconv.Itoa(r.RoomTypeID),
 		Quantity:   r.Quantity,
 		CheckIn:    TimeToString(r.CheckIn),
 		CheckOut:   TimeToString(r.CheckOut),
 		Status:     r.Status,
-		GuestID:    r.GuestID,
+		GuestID:    strconv.Itoa(r.GuestID),
 		HotelID:    strconv.Itoa(r.HotelID),
 	}
 }

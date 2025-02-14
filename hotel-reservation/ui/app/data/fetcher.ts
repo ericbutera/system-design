@@ -1,21 +1,21 @@
 import createApolloClient from "@/app/lib/apolloClient";
-import { gql } from "@apollo/client";
+import { ApolloError, gql } from "@apollo/client";
 
 export interface Room {
-  id: number;
+  id: string;
   number: string;
-  hotelId: number;
+  hotelId: string;
 }
 
 export interface HotelById {
-  id: number;
+  id: string;
   name: string;
   location: string;
   rooms: Room[];
 }
 
 const FETCH_HOTEL = gql`
-  query HotelById($id: Int!) {
+  query HotelById($id: ID!) {
     hotelById(id: $id) {
       id
       name
@@ -28,17 +28,26 @@ const FETCH_HOTEL = gql`
     }
   }
 `;
-export async function fetchHotel(id: number): Promise<HotelById> {
+export async function fetchHotel(id: string): Promise<HotelById> {
   const client = createApolloClient();
-  const { data } = await client.query({
-    query: FETCH_HOTEL,
-    variables: { id: id },
-  });
-  return data.hotelById;
+  try {
+    const { data } = await client.query({
+      query: FETCH_HOTEL,
+      variables: { id: id },
+    });
+    return data.hotelById;
+  } catch (e) {
+    console.error(e);
+    if (e instanceof ApolloError) {
+      console.error("gql errors %o", e.graphQLErrors);
+      console.error("network errors %o", e.networkError);
+    }
+    throw e;
+  }
 }
 
 export interface Hotel {
-  id: number;
+  id: string;
   name: string;
   location: string;
 }
@@ -64,18 +73,18 @@ export class ReservationInput {
   constructor(
     public checkInDate: string,
     public checkOutDate: string,
-    public roomTypeId: number,
+    public roomTypeId: string,
     public quantity: number,
-    public hotelId: number
+    public hotelId: string
   ) {}
 }
 
 const CREATE_MUTATION = gql`
   mutation CreateReservation(
-    $hotelId: Int!
+    $hotelId: ID!
     $checkInDate: String!
     $checkOutDate: String!
-    $roomTypeId: Int!
+    $roomTypeId: ID!
     $quantity: Int!
   ) {
     createReservation(
@@ -103,15 +112,15 @@ const CREATE_MUTATION = gql`
 `;
 
 export interface Reservation {
-  id: number;
+  id: string;
   quantity: number;
   checkIn: string;
   checkOut: string;
   status: string;
-  roomTypeId: number;
-  hotelId: number;
-  paymentId: number;
-  guestId: number;
+  roomTypeId: string;
+  hotelId: string;
+  paymentId: string;
+  guestId: string;
   roomType: string;
   createdAt: string;
 }
@@ -132,12 +141,12 @@ export async function createReservation(
 }
 
 export interface Reservation {
-  id: number;
+  id: string;
   quantity: number;
   checkIn: string;
   checkOut: string;
   status: string;
-  roomTypeId: number;
+  roomTypeId: string;
   roomType: string;
   createdAt: string;
 }
@@ -158,13 +167,11 @@ const VIEW_RESERVATION = gql`
     }
   }
 `;
-export async function fetchReservation(id: number): Promise<Reservation> {
+export async function fetchReservation(id: string): Promise<Reservation> {
   const client = createApolloClient();
   const { data } = await client.query({
     query: VIEW_RESERVATION,
-    variables: {
-      id: id.toString(),
-    },
+    variables: { id: id },
   });
   return data.viewReservation;
 }

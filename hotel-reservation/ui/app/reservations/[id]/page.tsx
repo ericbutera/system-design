@@ -11,7 +11,7 @@ export default async function ReservationPage({
   params: Promise<Params>;
 }) {
   const id = (await params).id;
-  const reservation = await fetchReservation(Number(id));
+  const reservation = await fetchReservation(id);
 
   return (
     <div className="p-4">

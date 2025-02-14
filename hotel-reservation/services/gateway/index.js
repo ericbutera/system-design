@@ -7,9 +7,10 @@ const { startStandaloneServer } = require("@apollo/server/standalone");
 const { ApolloServer } = require("@apollo/server");
 const express = require("express");
 
-const hotels = process.env.HOTEL_URL || "http://hotel/graphql";
-const reservations = process.env.RESERVATION_URL || "http://reservation/query";
-const payments = process.env.PAYMENT_URL || "http://payment/graphql/";
+const hotel = process.env.HOTEL_URL || "http://hotel/graphql";
+const reservation = process.env.RESERVATION_URL || "http://reservation/query";
+const payment = process.env.PAYMENT_URL || "http://payment/graphql/";
+// const search = process.env.SEARCH_URL || "http://search/graphql";
 
 const app = express();
 app.use(express.json());
@@ -23,9 +24,10 @@ class AuthenticatedDataSource extends RemoteGraphQLDataSource {
 
 const supergraphSdl = new IntrospectAndCompose({
   subgraphs: [
-    { name: "hotel", url: hotels },
-    { name: "reservation", url: reservations },
-    { name: "payment", url: payments },
+    { name: "hotel", url: hotel },
+    { name: "reservation", url: reservation },
+    { name: "payment", url: payment },
+    // { name: "search", url: search },
   ],
 });
 const gateway = new ApolloGateway({

@@ -9,7 +9,7 @@ from strawberry.federation import Schema
 class Room:
     id: strawberry.ID
     number: str
-    hotel_id: int
+    hotel_id: strawberry.ID
 
 
 @strawberry.federation.type(keys=["id"])

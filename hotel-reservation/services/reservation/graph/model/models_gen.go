@@ -5,9 +5,9 @@ package model
 type CreateReservationInput struct {
 	CheckInDate  string `json:"checkInDate"`
 	CheckOutDate string `json:"checkOutDate"`
-	RoomTypeID   int    `json:"roomTypeId"`
+	RoomTypeID   string `json:"roomTypeId"`
 	Quantity     int    `json:"quantity"`
-	HotelID      int    `json:"hotelId"`
+	HotelID      string `json:"hotelId"`
 }
 
 type Guest struct {
@@ -36,9 +36,9 @@ type Reservation struct {
 	CheckIn    string   `json:"checkIn"`
 	CheckOut   string   `json:"checkOut"`
 	Status     string   `json:"status"`
-	RoomTypeID int      `json:"roomTypeId"`
-	PaymentID  int      `json:"paymentId"`
-	GuestID    int      `json:"guestId"`
+	RoomTypeID string   `json:"roomTypeId"`
+	PaymentID  string   `json:"paymentId"`
+	GuestID    string   `json:"guestId"`
 	RoomType   string   `json:"roomType"`
 	Guest      *Guest   `json:"guest"`
 	Payment    *Payment `json:"payment,omitempty"`

@@ -11,19 +11,19 @@ import {
 export function CreateReservation({ hotel }: { hotel: HotelById }) {
   const [checkInDate, setCheckInDate] = useState("");
   const [checkOutDate, setCheckOutDate] = useState("");
-  const [roomTypeId, setRoomTypeId] = useState(hotel.rooms[0]?.id || 0);
+  const [roomTypeId, setRoomTypeId] = useState("1");
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState("");
   const router = useRouter();
 
   //const roomTypes = await fetchRoomTypes(hotel.id);
   const roomTypes = [
-    { id: 1, name: "Single" },
-    { id: 2, name: "Double" },
+    { id: "1", name: "Single" },
+    { id: "2", name: "Double" },
   ];
 
   const handleReservation =
-    (hotelId: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
+    (hotelId: string) => async (event: React.MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
 
       if (
@@ -90,7 +90,7 @@ export function CreateReservation({ hotel }: { hotel: HotelById }) {
             name="roomTypeId"
             value={roomTypeId}
             required
-            onChange={(e) => setRoomTypeId(Number(e.target.value))}
+            onChange={(e) => setRoomTypeId(e.target.value)}
           >
             {roomTypes.map((roomType) => (
               <option key={roomType.id} value={roomType.name}>
@@ -117,7 +117,7 @@ export function CreateReservation({ hotel }: { hotel: HotelById }) {
       <div>
         <button
           className="bg-blue-500 text-white px-4 py-2 rounded"
-          onClick={handleReservation(Number(hotel.id))}
+          onClick={handleReservation(hotel.id)}
         >
           Confirm Booking
         </button>

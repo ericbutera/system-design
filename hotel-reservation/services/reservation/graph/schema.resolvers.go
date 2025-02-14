@@ -19,14 +19,16 @@ import (
 // CreateReservation is the resolver for the createReservation field.
 func (r *mutationResolver) CreateReservation(ctx context.Context, input model.CreateReservationInput) (*model.Reservation, error) {
 	// TODO: support guest checkout (guestName, guestEmail)
-	user := auth.ForContext(ctx) // only logged in users can create reservations
+	user := auth.ForContext(ctx)                    // only logged in users can create reservations
+	roomTypeID, _ := strconv.Atoi(input.RoomTypeID) // TODO: use goverter to not type all this out
+	hotelID, _ := strconv.Atoi(input.HotelID)
 	reservation, err := r.Reservations.Create(ctx, &dbModel.Reservation{
 		CheckIn:    reservations.TimeFromString(input.CheckInDate),
 		CheckOut:   reservations.TimeFromString(input.CheckOutDate),
 		Status:     string(reservations.StatusPending),
 		Quantity:   input.Quantity,
-		RoomTypeID: input.RoomTypeID,
-		HotelID:    input.HotelID,
+		RoomTypeID: roomTypeID,
+		HotelID:    hotelID,
 		GuestID:    user.ID,
 	})
 	if err != nil {
@@ -38,7 +40,7 @@ func (r *mutationResolver) CreateReservation(ctx context.Context, input model.Cr
 		CheckOut:   reservations.TimeToString(reservation.CheckOut),
 		Status:     reservation.Status,
 		Quantity:   reservation.Quantity, // TODO: if payment fails we need to rollback the inventory
-		RoomTypeID: reservation.RoomTypeID,
+		RoomTypeID: strconv.Itoa(reservation.RoomTypeID),
 		HotelID:    strconv.Itoa(reservation.HotelID),
 	}, nil
 }
@@ -61,10 +63,10 @@ func (r *queryResolver) ViewReservation(ctx context.Context, id string) (*model.
 		CheckOut:   reservation.CheckOut.Format("2006-01-02"),
 		Status:     reservation.Status,
 		Quantity:   reservation.Quantity,
-		RoomTypeID: reservation.RoomTypeID,
+		RoomTypeID: strconv.Itoa(reservation.RoomTypeID),
 		HotelID:    strconv.Itoa(reservation.HotelID),
-		GuestID:    reservation.GuestID,
-		PaymentID:  lo.FromPtr(reservation.PaymentID),
+		GuestID:    strconv.Itoa(reservation.GuestID),
+		PaymentID:  strconv.Itoa(lo.FromPtr(reservation.PaymentID)),
 	}, nil
 }
 
@@ -83,10 +85,10 @@ func (r *queryResolver) ViewReservations(ctx context.Context) ([]*model.Reservat
 			CheckOut:   reservations.TimeToString(row.CheckOut),
 			Status:     row.Status,
 			Quantity:   row.Quantity,
-			RoomTypeID: row.RoomTypeID,
+			RoomTypeID: strconv.Itoa(row.RoomTypeID),
 			HotelID:    strconv.Itoa(row.HotelID),
-			PaymentID:  lo.FromPtr(row.PaymentID),
-			GuestID:    row.GuestID,
+			PaymentID:  strconv.Itoa(lo.FromPtr(row.PaymentID)),
+			GuestID:    strconv.Itoa(row.GuestID),
 		}
 	}
 

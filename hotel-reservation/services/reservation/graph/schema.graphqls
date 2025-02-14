@@ -4,9 +4,9 @@ type Reservation {
   checkIn: String!
   checkOut: String!
   status: String!
-  roomTypeId: Int!
-  paymentId: Int!
-  guestId: Int!
+  roomTypeId: ID!
+  paymentId: ID!
+  guestId: ID!
   roomType: String!
   guest: Guest!
   payment: Payment
@@ -40,9 +40,9 @@ input CreateReservationInput {
   # guestEmail: String!
   checkInDate: String!
   checkOutDate: String!
-  roomTypeId: Int! # RoomType!
+  roomTypeId: ID! # RoomType!
   quantity: Int!
-  hotelId: Int!
+  hotelId: ID!
 }
 
 type Mutation {
