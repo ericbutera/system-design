@@ -1,0 +1,17 @@
+v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
+# v1alpha1.extension_repo('eb', url='https://github.com/ericbutera/tilt')
+
+v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
+load('ext://go_helper', 'go_compile', 'go_image')
+
+# k8s_resource('kafdrop', port_forwards=9000, resource_deps=['redpanda'])
+# k8s_yaml('./k8s/kafdrop.yaml')
+
+v1alpha1.extension(name='redpanda', repo_name='eb', repo_path='extensions/redpanda')
+load('ext://redpanda', 'redpanda')
+redpanda()
+
+k8s_yaml('./k8s/readings.yaml')
+go_compile('readings-compile', './cmd/readings', ['./cmd/readings'])
+go_image('readings', './cmd/readings')
+k8s_resource('readings', port_forwards=8080, resource_deps=['readings-compile'])
