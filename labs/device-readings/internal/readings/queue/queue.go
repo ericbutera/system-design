@@ -10,7 +10,7 @@ type WriteResult struct {
 }
 
 type Producer interface {
-	Write(ctx context.Context, batch []models.BatchReading) (WriteResult, error) // TODO: generic type
+	Write(ctx context.Context, batch []models.BatchReading) error // TODO: generic type
 }
 
 type Consumer interface {

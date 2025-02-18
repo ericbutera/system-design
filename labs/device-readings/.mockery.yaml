@@ -7,6 +7,17 @@ mockname: "Mock{{.InterfaceName}}"
 outpkg: "{{.PackageName}}"
 
 packages:
-  device-readings/internal/db:
+  device-readings/internal/readings/db:
     interfaces:
       DB:
+
+
+  device-readings/internal/readings/repo:
+    interfaces:
+      Repo:
+
+
+  device-readings/internal/readings/queue:
+    interfaces:
+      Producer:
+      Consumer:

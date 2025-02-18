@@ -15,3 +15,8 @@ k8s_yaml('./k8s/readings.yaml')
 go_compile('readings-compile', './cmd/readings', ['./cmd/readings'])
 go_image('readings', './cmd/readings')
 k8s_resource('readings', port_forwards=8080, resource_deps=['readings-compile'])
+
+k8s_yaml('./k8s/worker.yaml')
+go_compile('worker-compile', './cmd/worker', ['./cmd/worker'])
+go_image('worker', './cmd/worker')
+k8s_resource('worker', resource_deps=['worker-compile'])

@@ -8,6 +8,8 @@ import (
 	"syscall"
 
 	"device-readings/internal/api"
+	"device-readings/internal/env"
+
 	// "device-readings/internal/db"
 	"device-readings/internal/readings/queue"
 	"device-readings/internal/readings/repo"
@@ -24,7 +26,11 @@ func start() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	producer := queue.NewKafkaProducer()
+	config := lo.Must(env.New[queue.KafkaConfig]())
+
+	producer := queue.NewKafkaProducer(config.Broker, config.Topic)
+	defer producer.Close()
+
 	db := &gorm.DB{} // db := lo.Must(db.New(db.NewDefaultConfig()))
 	repo := repo.NewGorm(db)
 	server := lo.Must(api.New(producer, repo))

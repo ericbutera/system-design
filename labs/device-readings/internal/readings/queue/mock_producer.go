@@ -23,31 +23,21 @@ func (_m *MockProducer) EXPECT() *MockProducer_Expecter {
 }
 
 // Write provides a mock function with given fields: ctx, batch
-func (_m *MockProducer) Write(ctx context.Context, batch []models.BatchReading) (int, error) {
+func (_m *MockProducer) Write(ctx context.Context, batch []models.BatchReading) error {
 	ret := _m.Called(ctx, batch)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Write")
 	}
 
-	var r0 int
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, []models.BatchReading) (int, error)); ok {
-		return rf(ctx, batch)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, []models.BatchReading) int); ok {
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, []models.BatchReading) error); ok {
 		r0 = rf(ctx, batch)
 	} else {
-		r0 = ret.Get(0).(int)
+		r0 = ret.Error(0)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, []models.BatchReading) error); ok {
-		r1 = rf(ctx, batch)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	return r0
 }
 
 // MockProducer_Write_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Write'
@@ -69,12 +59,12 @@ func (_c *MockProducer_Write_Call) Run(run func(ctx context.Context, batch []mod
 	return _c
 }
 
-func (_c *MockProducer_Write_Call) Return(_a0 int, _a1 error) *MockProducer_Write_Call {
-	_c.Call.Return(_a0, _a1)
+func (_c *MockProducer_Write_Call) Return(_a0 error) *MockProducer_Write_Call {
+	_c.Call.Return(_a0)
 	return _c
 }
 
-func (_c *MockProducer_Write_Call) RunAndReturn(run func(context.Context, []models.BatchReading) (int, error)) *MockProducer_Write_Call {
+func (_c *MockProducer_Write_Call) RunAndReturn(run func(context.Context, []models.BatchReading) error) *MockProducer_Write_Call {
 	_c.Call.Return(run)
 	return _c
 }

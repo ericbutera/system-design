@@ -54,15 +54,13 @@ func (h *Handlers) StoreReadings(c *gin.Context) {
 		return
 	}
 
-	res, err := h.producer.Write(c.Request.Context(), req.Readings)
+	err := h.producer.Write(c.Request.Context(), req.Readings)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "unable to save readings"}) // TODO: support validation errors; if errors.As(err, &repo.ValidationErrors{}) { c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid record: " + err.Error()}) return }
 		return
 	}
 
-	c.JSON(http.StatusOK, &StoreReadingsResponse{
-		ID: res.ID,
-	})
+	c.JSON(http.StatusNoContent, nil)
 }
 
 type GetReadingsResponse struct {
