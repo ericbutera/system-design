@@ -5,6 +5,7 @@ import (
 	"device-readings/internal/env"
 	"device-readings/internal/queue"
 	"device-readings/internal/readings/models"
+	"device-readings/internal/readings/processor"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -27,11 +28,10 @@ func start() {
 	defer reader.Close()
 
 	slog.Info("starting batch readings worker", "broker", config.Broker, "topic", config.Topic, "group", config.Group)
-	err := reader.Read(ctx, func(ctx context.Context, batch []models.BatchReading) error {
-		slog.Info("received readings", "readings", batch)
-		// TODO: store in db
-		return nil
-	})
+
+	processor := processor.NewProcessor(reader)
+	err := processor.Run(ctx)
+
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)

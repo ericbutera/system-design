@@ -74,6 +74,8 @@ func (c *KafkaReader[T]) Close() {
 	c.reader.Close()
 }
 
+// Read reads messages from Kafka and calls the handler function for each message.
+// Return false in the handler to retry the message.
 func (c *KafkaReader[T]) Read(ctx context.Context, handler func(ctx context.Context, data T) error) error {
 	for {
 		msg, err := c.reader.FetchMessage(ctx)
