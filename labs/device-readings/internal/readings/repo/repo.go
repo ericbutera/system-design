@@ -21,11 +21,13 @@ type Filters struct {
 }
 
 type StoreReadingsResult struct {
+	Failures int
+	Succeed  int
 	ResultID string // queue message id
 }
 
 type Repo interface {
-	StoreReadings(readings []models.Reading) (StoreReadingsResult, error)
+	StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error)
 	GetReadings(ctx context.Context, filters Filters) ([]models.Reading, error)
 	GetReadingsByDevice(ctx context.Context, deviceID string) ([]models.Reading, error)
 }

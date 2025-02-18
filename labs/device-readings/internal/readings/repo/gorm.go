@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"device-readings/internal/readings/models"
+	"errors"
 	"log/slog"
 
 	"gorm.io/gorm"
@@ -18,9 +19,29 @@ func NewGorm(db *gorm.DB) *Gorm {
 	}
 }
 
-func (g *Gorm) StoreReadings(readings []models.Reading) (StoreReadingsResult, error) {
-	slog.Debug("storing readings", "readings", readings)
-	return StoreReadingsResult{ResultID: "result-id"}, nil
+var (
+	ErrBatchReadingSaveFailure = errors.New("batch reading save failure")
+)
+
+func (g *Gorm) StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error) {
+	// TODO: save failures for inspection
+	result := StoreReadingsResult{}
+	err := g.db.Transaction(func(tx *gorm.DB) error {
+		for _, reading := range readings {
+			res := tx.Create(&reading)
+			if res.Error != nil {
+				result.Failures++
+				continue
+			}
+			result.Succeed++
+		}
+		if result.Failures > 0 {
+			tx.Rollback() // TODO: determine failure threshold before rollback
+			return ErrBatchReadingSaveFailure
+		}
+		return nil
+	})
+	return result, err
 }
 
 func (g *Gorm) GetReadings(ctx context.Context, filters Filters) ([]models.Reading, error) {

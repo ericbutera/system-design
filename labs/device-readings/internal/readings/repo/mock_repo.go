@@ -141,7 +141,7 @@ func (_c *MockRepo_GetReadingsByDevice_Call) RunAndReturn(run func(context.Conte
 }
 
 // StoreReadings provides a mock function with given fields: readings
-func (_m *MockRepo) StoreReadings(readings []models.Reading) (StoreReadingsResult, error) {
+func (_m *MockRepo) StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error) {
 	ret := _m.Called(readings)
 
 	if len(ret) == 0 {
@@ -150,16 +150,16 @@ func (_m *MockRepo) StoreReadings(readings []models.Reading) (StoreReadingsResul
 
 	var r0 StoreReadingsResult
 	var r1 error
-	if rf, ok := ret.Get(0).(func([]models.Reading) (StoreReadingsResult, error)); ok {
+	if rf, ok := ret.Get(0).(func([]models.BatchReading) (StoreReadingsResult, error)); ok {
 		return rf(readings)
 	}
-	if rf, ok := ret.Get(0).(func([]models.Reading) StoreReadingsResult); ok {
+	if rf, ok := ret.Get(0).(func([]models.BatchReading) StoreReadingsResult); ok {
 		r0 = rf(readings)
 	} else {
 		r0 = ret.Get(0).(StoreReadingsResult)
 	}
 
-	if rf, ok := ret.Get(1).(func([]models.Reading) error); ok {
+	if rf, ok := ret.Get(1).(func([]models.BatchReading) error); ok {
 		r1 = rf(readings)
 	} else {
 		r1 = ret.Error(1)
@@ -174,14 +174,14 @@ type MockRepo_StoreReadings_Call struct {
 }
 
 // StoreReadings is a helper method to define mock.On call
-//   - readings []models.Reading
+//   - readings []models.BatchReading
 func (_e *MockRepo_Expecter) StoreReadings(readings interface{}) *MockRepo_StoreReadings_Call {
 	return &MockRepo_StoreReadings_Call{Call: _e.mock.On("StoreReadings", readings)}
 }
 
-func (_c *MockRepo_StoreReadings_Call) Run(run func(readings []models.Reading)) *MockRepo_StoreReadings_Call {
+func (_c *MockRepo_StoreReadings_Call) Run(run func(readings []models.BatchReading)) *MockRepo_StoreReadings_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].([]models.Reading))
+		run(args[0].([]models.BatchReading))
 	})
 	return _c
 }
@@ -191,7 +191,7 @@ func (_c *MockRepo_StoreReadings_Call) Return(_a0 StoreReadingsResult, _a1 error
 	return _c
 }
 
-func (_c *MockRepo_StoreReadings_Call) RunAndReturn(run func([]models.Reading) (StoreReadingsResult, error)) *MockRepo_StoreReadings_Call {
+func (_c *MockRepo_StoreReadings_Call) RunAndReturn(run func([]models.BatchReading) (StoreReadingsResult, error)) *MockRepo_StoreReadings_Call {
 	_c.Call.Return(run)
 	return _c
 }

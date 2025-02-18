@@ -9,9 +9,14 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+const (
+	MinBytes = 100
+	MaxBytes = 10e6 // Maximum 10MB to fetch
+)
+
 type KafkaConfig struct {
 	Broker string `env:"KAFKA_BROKER" envDefault:"redpanda:9092"`
-	Topic  string `env:"KAFKA_TOPIC" envDefault:"readings"`
+	Topic  string `env:"KAFKA_TOPIC" envDefault:"readings-topic"`
 	Group  string `env:"KAFKA_GROUP" envDefault:"readings-group"`
 }
 
@@ -59,11 +64,11 @@ func NewKafkaReader[T any](broker, topic, group string) *KafkaReader[T] {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{broker},
 		Topic:    topic,
-		GroupID:  group,
-		MinBytes: 1,
-		MaxBytes: 10e6, // Maximum 10MB to fetch
-		//StartOffset: kafka.FirstOffset, // TODO: remove
-		//CommitInterval: 0,
+		GroupID:  group, // group stores the offset; group is specific to a worker/subscriber/consumer
+		MinBytes: MinBytes,
+		MaxBytes: MaxBytes,
+		// StartOffset: kafka.FirstOffset, // this can be used to reprocess messages
+		// CommitInterval: 0,
 	})
 	return &KafkaReader[T]{
 		reader: reader,

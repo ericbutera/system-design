@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"device-readings/internal/db"
 	"device-readings/internal/env"
 	"device-readings/internal/queue"
 	"device-readings/internal/readings/models"
 	"device-readings/internal/readings/processor"
+	"device-readings/internal/readings/repo"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -29,7 +31,10 @@ func start() {
 
 	slog.Info("starting batch readings worker", "broker", config.Broker, "topic", config.Topic, "group", config.Group)
 
-	processor := processor.NewProcessor(reader)
+	db := lo.Must(db.New(db.NewDefaultConfig()))
+	repo := repo.NewGorm(db)
+
+	processor := processor.NewProcessor(reader, repo)
 	err := processor.Run(ctx)
 
 	if err != nil {
