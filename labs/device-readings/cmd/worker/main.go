@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"device-readings/internal/env"
+	"device-readings/internal/queue"
 	"device-readings/internal/readings/models"
-	"device-readings/internal/readings/queue"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -23,12 +23,13 @@ func start() {
 
 	config := lo.Must(env.New[queue.KafkaConfig]())
 
-	consumer := queue.NewKafkaConsumer(config.Broker, config.Topic, config.Group)
-	defer consumer.Close()
+	reader := queue.NewKafkaReader[[]models.BatchReading](config.Broker, config.Topic, config.Group)
+	defer reader.Close()
 
-	slog.Info("starting consumer", "broker", config.Broker, "topic", config.Topic, "group", config.Group)
-	err := consumer.Read(ctx, func(ctx context.Context, batch []models.BatchReading) error {
+	slog.Info("starting batch readings worker", "broker", config.Broker, "topic", config.Topic, "group", config.Group)
+	err := reader.Read(ctx, func(ctx context.Context, batch []models.BatchReading) error {
 		slog.Info("received readings", "readings", batch)
+		// TODO: store in db
 		return nil
 	})
 	if err != nil {

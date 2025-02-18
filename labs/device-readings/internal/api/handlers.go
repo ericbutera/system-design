@@ -16,14 +16,14 @@ import (
 const DateFormatISO8601 = "2006-01-02T15:04:05-07:00"
 
 type Handlers struct {
-	producer queue.Producer
-	repo     repo.Repo
+	batchWriter queue.BatchReadingWriter
+	repo        repo.Repo
 }
 
-func NewHandlers(producer queue.Producer, repo repo.Repo) (*Handlers, error) {
+func NewHandlers(batchWriter queue.BatchReadingWriter, repo repo.Repo) (*Handlers, error) {
 	return &Handlers{
-		producer: producer,
-		repo:     repo,
+		batchWriter: batchWriter,
+		repo:        repo,
 	}, nil
 }
 
@@ -54,7 +54,7 @@ func (h *Handlers) StoreReadings(c *gin.Context) {
 		return
 	}
 
-	err := h.producer.Write(c.Request.Context(), req.Readings)
+	err := h.batchWriter.Write(c.Request.Context(), req.Readings)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "unable to save readings"}) // TODO: support validation errors; if errors.As(err, &repo.ValidationErrors{}) { c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid record: " + err.Error()}) return }
 		return

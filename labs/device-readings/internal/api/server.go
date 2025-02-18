@@ -14,8 +14,8 @@ type Server struct {
 	router *gin.Engine
 }
 
-func New(producer queue.Producer, repo repo.Repo) (*Server, error) {
-	handlers, err := NewHandlers(producer, repo)
+func New(writer queue.BatchReadingWriter, repo repo.Repo) (*Server, error) {
+	handlers, err := NewHandlers(writer, repo)
 	if err != nil {
 		return nil, err
 	}

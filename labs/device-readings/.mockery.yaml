@@ -19,5 +19,5 @@ packages:
 
   device-readings/internal/readings/queue:
     interfaces:
-      Producer:
-      Consumer:
+      BatchReadingWriter:
+      BatchReadingReader:

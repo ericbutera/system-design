@@ -11,7 +11,8 @@ import (
 	"device-readings/internal/env"
 
 	// "device-readings/internal/db"
-	"device-readings/internal/readings/queue"
+	"device-readings/internal/queue"
+	"device-readings/internal/readings/models"
 	"device-readings/internal/readings/repo"
 
 	"github.com/samber/lo"
@@ -28,12 +29,12 @@ func start() {
 
 	config := lo.Must(env.New[queue.KafkaConfig]())
 
-	producer := queue.NewKafkaProducer(config.Broker, config.Topic)
-	defer producer.Close()
+	writer := queue.NewKafkaWriter[[]models.BatchReading](config.Broker, config.Topic)
+	defer writer.Close()
 
 	db := &gorm.DB{} // db := lo.Must(db.New(db.NewDefaultConfig()))
 	repo := repo.NewGorm(db)
-	server := lo.Must(api.New(producer, repo))
+	server := lo.Must(api.New(writer, repo))
 
 	srvErr := make(chan error, 1)
 	go func() {

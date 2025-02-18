@@ -5,14 +5,10 @@ import (
 	"device-readings/internal/readings/models"
 )
 
-type WriteResult struct {
-	ID string
+type BatchReadingWriter interface {
+	Write(ctx context.Context, batch []models.BatchReading) error
 }
 
-type Producer interface {
-	Write(ctx context.Context, batch []models.BatchReading) error // TODO: generic type
-}
-
-type Consumer interface {
+type BatchReadingReader interface {
 	Read(ctx context.Context, handler func(ctx context.Context, batch []models.BatchReading) error) error
 }

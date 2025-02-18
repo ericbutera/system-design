@@ -34,10 +34,10 @@ func setup(t *testing.T) *testSetup {
 
 	gin.SetMode(gin.TestMode)
 
-	producer := new(queue.MockProducer)
+	writer := new(queue.MockBatchReadingWriter)
 	repo := new(repo.MockRepo)
 
-	handlers, err := api.NewHandlers(producer, repo)
+	handlers, err := api.NewHandlers(writer, repo)
 	require.NoError(t, err)
 
 	router := api.NewRouter(handlers)

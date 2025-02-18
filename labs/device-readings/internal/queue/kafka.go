@@ -2,7 +2,6 @@ package queue
 
 import (
 	"context"
-	"device-readings/internal/readings/models"
 	"encoding/json"
 	"log"
 	"log/slog"
@@ -16,35 +15,34 @@ type KafkaConfig struct {
 	Group  string `env:"KAFKA_GROUP" envDefault:"readings-group"`
 }
 
-type KafkaProducer struct {
+type KafkaWriter[T any] struct {
 	writer *kafka.Writer
 }
 
-func NewKafkaProducer(broker string, topic string) *KafkaProducer {
+func NewKafkaWriter[T any](broker string, topic string) *KafkaWriter[T] {
 	writer := &kafka.Writer{
 		Addr:         kafka.TCP(broker),
 		Topic:        topic,
 		RequiredAcks: kafka.RequireAll,
 	}
 
-	return &KafkaProducer{
+	return &KafkaWriter[T]{
 		writer: writer,
 	}
 }
 
-func (p *KafkaProducer) Close() {
+func (p *KafkaWriter[T]) Close() {
 	p.writer.Close()
 }
 
-func (p *KafkaProducer) Write(ctx context.Context, readings []models.BatchReading) error {
-	slog.Info("writing readings", "readings", readings)
-	data, err := json.Marshal(readings)
+func (p *KafkaWriter[T]) Write(ctx context.Context, data T) error {
+	encoded, err := json.Marshal(data)
 	if err != nil {
 		log.Printf("Error marshalling message: %v", err)
 		return err
 	}
 
-	err = p.writer.WriteMessages(context.Background(), kafka.Message{Value: data})
+	err = p.writer.WriteMessages(context.Background(), kafka.Message{Value: encoded})
 	if err != nil {
 		log.Printf("Error producing message: %v", err)
 		return err
@@ -53,11 +51,11 @@ func (p *KafkaProducer) Write(ctx context.Context, readings []models.BatchReadin
 	return nil
 }
 
-type KafkaConsumer struct {
+type KafkaReader[T any] struct {
 	reader *kafka.Reader
 }
 
-func NewKafkaConsumer(broker, topic, group string) *KafkaConsumer {
+func NewKafkaReader[T any](broker, topic, group string) *KafkaReader[T] {
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{broker},
 		Topic:    topic,
@@ -67,16 +65,16 @@ func NewKafkaConsumer(broker, topic, group string) *KafkaConsumer {
 		//StartOffset: kafka.FirstOffset, // TODO: remove
 		//CommitInterval: 0,
 	})
-	return &KafkaConsumer{
+	return &KafkaReader[T]{
 		reader: reader,
 	}
 }
 
-func (c *KafkaConsumer) Close() {
+func (c *KafkaReader[T]) Close() {
 	c.reader.Close()
 }
 
-func (c *KafkaConsumer) Read(ctx context.Context, handler func(ctx context.Context, readings []models.BatchReading) error) error {
+func (c *KafkaReader[T]) Read(ctx context.Context, handler func(ctx context.Context, data T) error) error {
 	for {
 		msg, err := c.reader.FetchMessage(ctx)
 		slog.Info("reading message",
@@ -91,7 +89,7 @@ func (c *KafkaConsumer) Read(ctx context.Context, handler func(ctx context.Conte
 			return err
 		}
 
-		var data []models.BatchReading
+		var data T
 		err = json.Unmarshal(msg.Value, &data)
 		if err != nil {
 			log.Printf("Error unmarshalling message: %v", err)
@@ -104,11 +102,11 @@ func (c *KafkaConsumer) Read(ctx context.Context, handler func(ctx context.Conte
 			return err
 		}
 
-		// err = c.reader.CommitMessages(ctx, msg)
-		// if err != nil {
-		// 	slog.Error("error committing message", "error", err)
-		// 	return err
-		// }
+		err = c.reader.CommitMessages(ctx, msg)
+		if err != nil {
+			slog.Error("error committing message", "error", err)
+			return err
+		}
 		slog.Info("message committed successfully")
 	}
 }
