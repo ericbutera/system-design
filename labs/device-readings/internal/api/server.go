@@ -1,11 +1,11 @@
 package api
 
 import (
-	"device-readings/internal/readings/queue"
-	"device-readings/internal/readings/repo"
 	"log/slog"
 	"net/http"
 
+	"device-readings/internal/readings/queue"
+	"device-readings/internal/readings/repo"
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 )

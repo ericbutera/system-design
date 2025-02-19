@@ -1,10 +1,6 @@
 package api_test
 
 import (
-	"device-readings/internal/api"
-	"device-readings/internal/readings/models"
-	"device-readings/internal/readings/queue"
-	"device-readings/internal/readings/repo"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +8,10 @@ import (
 	"strings"
 	"testing"
 
+	"device-readings/internal/api"
+	"device-readings/internal/readings/models"
+	"device-readings/internal/readings/queue"
+	"device-readings/internal/readings/repo"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/require"
 )

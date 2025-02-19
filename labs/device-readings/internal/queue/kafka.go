@@ -16,8 +16,8 @@ const (
 
 type KafkaConfig struct {
 	Broker string `env:"KAFKA_BROKER" envDefault:"redpanda:9092"`
-	Topic  string `env:"KAFKA_TOPIC" envDefault:"readings-topic"`
-	Group  string `env:"KAFKA_GROUP" envDefault:"readings-group"`
+	Topic  string `env:"KAFKA_TOPIC"  envDefault:"readings-topic"`
+	Group  string `env:"KAFKA_GROUP"  envDefault:"readings-group"`
 }
 
 type KafkaWriter[T any] struct {

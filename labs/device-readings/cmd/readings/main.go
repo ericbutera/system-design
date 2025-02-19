@@ -2,20 +2,18 @@ package main
 
 import (
 	"context"
+	"device-readings/internal/api"
+	"device-readings/internal/db"
+	"device-readings/internal/env"
+	"device-readings/internal/queue"
+	"device-readings/internal/readings/models"
+	"device-readings/internal/readings/repo"
 	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"device-readings/internal/api"
-	"device-readings/internal/db"
-	"device-readings/internal/env"
-
 	// "device-readings/internal/db"
-	"device-readings/internal/queue"
-	"device-readings/internal/readings/models"
-	"device-readings/internal/readings/repo"
-
 	"github.com/samber/lo"
 )
 

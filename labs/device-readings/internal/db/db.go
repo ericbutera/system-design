@@ -1,8 +1,9 @@
 package db
 
 import (
-	"device-readings/internal/env"
+	"log/slog"
 
+	"device-readings/internal/env"
 	slogGorm "github.com/orandin/slog-gorm"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -10,7 +11,7 @@ import (
 
 type Config struct {
 	LogQueries bool   `env:"DB_LOG_QUERIES" envDefault:"true"`
-	Dsn        string `env:"DB_DSN" envDefault:"host=timescaledb user=postgres password=password dbname=postgres port=5432 sslmode=disable"`
+	Dsn        string `env:"DB_DSN"         envDefault:"host=timescaledb user=postgres password=password dbname=postgres port=5432 sslmode=disable"`
 }
 
 func NewFromEnv() (*gorm.DB, error) {
@@ -24,7 +25,9 @@ func NewFromEnv() (*gorm.DB, error) {
 func New(config *Config) (*gorm.DB, error) {
 	opts := &gorm.Config{}
 	if config.LogQueries {
-		opts.Logger = slogGorm.New()
+		l := slogGorm.New()
+		slogGorm.SetLogLevel(slogGorm.DefaultLogType, slog.LevelDebug)
+		opts.Logger = l
 	}
 
 	instance, err := gorm.Open(postgres.Open(config.Dsn), opts)

@@ -2,10 +2,11 @@ package repo
 
 import (
 	"context"
-	"device-readings/internal/readings/models"
 	"errors"
 
+	"device-readings/internal/readings/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Gorm struct {
@@ -21,9 +22,7 @@ func NewGorm(db *gorm.DB) (*Gorm, error) {
 	}, nil
 }
 
-var (
-	ErrBatchReadingSaveFailure = errors.New("batch reading save failure")
-)
+var ErrBatchReadingSaveFailure = errors.New("batch reading save failure")
 
 func (g *Gorm) StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error) {
 	if len(readings) == 0 {
@@ -42,16 +41,12 @@ func (g *Gorm) StoreReadings(readings []models.BatchReading) (StoreReadingsResul
 
 	result := StoreReadingsResult{}
 	err := g.db.Transaction(func(tx *gorm.DB) error {
-		res := tx.Create(&storedReadings)
+		res := tx.Clauses(clause.OnConflict{DoNothing: true}).Create(&storedReadings)
 		if res.Error != nil {
 			return res.Error
 		}
 
-		if int(res.RowsAffected) < len(readings) {
-			return ErrBatchReadingSaveFailure
-		}
-
-		result.Succeed = len(readings)
+		result.Succeed = int(res.RowsAffected)
 		return nil
 	})
 

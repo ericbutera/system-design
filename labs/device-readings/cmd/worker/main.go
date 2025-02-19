@@ -2,17 +2,17 @@ package main
 
 import (
 	"context"
+	"log/slog"
+	"os"
+	"os/signal"
+	"syscall"
+
 	"device-readings/internal/db"
 	"device-readings/internal/env"
 	"device-readings/internal/queue"
 	"device-readings/internal/readings/models"
 	"device-readings/internal/readings/processor"
 	"device-readings/internal/readings/repo"
-	"log/slog"
-	"os"
-	"os/signal"
-	"syscall"
-
 	"github.com/samber/lo"
 )
 
@@ -36,7 +36,6 @@ func start() {
 
 	processor := processor.NewProcessor(reader, repo)
 	err := processor.Run(ctx)
-
 	if err != nil {
 		slog.Error(err.Error())
 		os.Exit(1)

@@ -2,16 +2,19 @@ package repo
 
 import (
 	"context"
-	"device-readings/internal/readings/models"
 	"time"
+
+	"device-readings/internal/readings/models"
 )
 
 type RelativeTimes string
 
-const RelativeTimeQuarterHour RelativeTimes = "15m"
-const RelativeTimeHalfHour RelativeTimes = "30m"
-const RelativeTimeOneHour RelativeTimes = "1h"
-const RelativeTimeOneDay RelativeTimes = "1d"
+const (
+	RelativeTimeQuarterHour RelativeTimes = "15m"
+	RelativeTimeHalfHour    RelativeTimes = "30m"
+	RelativeTimeOneHour     RelativeTimes = "1h"
+	RelativeTimeOneDay      RelativeTimes = "1d"
+)
 
 type Filters struct {
 	DeviceID string

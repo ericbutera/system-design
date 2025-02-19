@@ -2,6 +2,7 @@ package queue
 
 import (
 	"context"
+
 	"device-readings/internal/readings/models"
 )
 

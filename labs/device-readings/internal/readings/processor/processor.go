@@ -2,10 +2,11 @@ package processor
 
 import (
 	"context"
+	"log/slog"
+
 	"device-readings/internal/queue"
 	"device-readings/internal/readings/models"
 	"device-readings/internal/readings/repo"
-	"log/slog"
 )
 
 type ReaderType = queue.KafkaReader[[]models.BatchReading]

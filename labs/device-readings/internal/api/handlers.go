@@ -1,15 +1,13 @@
 package api
 
 import (
+	"device-readings/internal/readings/models"
+	"device-readings/internal/readings/queue"
+	"device-readings/internal/readings/repo"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
-
-	"device-readings/internal/readings/models"
-	"device-readings/internal/readings/queue"
-	"device-readings/internal/readings/repo"
-
 	"github.com/gin-gonic/gin"
 )
 
