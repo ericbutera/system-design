@@ -3,6 +3,7 @@
 ## Low Level Design (LLD) / Object Oriented System Design (OOSD)
 
 - [Parking Lot](./parking-garage/)
+- [Device Readings](./labs/device-readings/)
 
 ## System Design
 

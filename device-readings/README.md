@@ -126,7 +126,7 @@ flowchart LR
   TimeseriesDB --> |QueryReadings| ReadingsService
 ```
 
-Influx DB
+[Timescaledb](https://www.timescale.com/) ~~Influx DB~~
 
 Tradeoffs:
 
@@ -140,42 +140,52 @@ Unknowns:
 
 Table:
 
-- device_id
-- type
-- timestamp
-- value
+```sql
+CREATE TABLE readings (
+    timestamp TIMESTAMPTZ NOT NULL,
+    device_id TEXT NOT NULL,
+    reading_type TEXT NOT NULL,
+    value DOUBLE PRECISION NOT NULL,
+    PRIMARY KEY (timestamp, device_id, reading_type)
+);
+
+SELECT create_hypertable('readings', 'timestamp');
+
+```
 
 Write:
 
 ```go
-// https://docs.influxdata.com/influxdb3/core/write-data/client-libraries/#construct-points-and-write-line-protocol
-reading := influxdb3.NewPointWithMeasurement("readings").
-  AddTag("device_id", "device-1").
-  AddField("temperature", 25.0).
-  SetTime(time.Now())
+type Reading struct {
+  Timestamp   time.Time `gorm:"not null;index:idx_unique_reading,unique"                   json:"timestamp"`
+  DeviceID    string    `gorm:"type:varchar(255);not null;index:idx_unique_reading,unique" json:"device_id"`
+  ReadingType string    `gorm:"type:varchar(50);not null;index:idx_unique_reading,unique"  json:"reading_type"`
+  Value       float64   `gorm:"not null"                                                   json:"value"`
+}
 
-readings := []influxdb3.Point{reading}
-writeAPI.WritePoints(context.Background(), readings)
+db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{}) // timescale is pg
+db.Create(&Reading{
+  Timestamp:   time.Now(),
+  DeviceID:    "device-1",
+  ReadingType: "temperature",
+  Value:       25.0,
+})
 ```
 
 Read absolute time range:
 
 ```sql
-SELECT
-  value
+SELECT value
 FROM readings
-WHERE
-  device_id='device-1' AND
-  timestamp >= '2021-01-01T00:00:00Z' AND time <= '2021-01-01T01:00:00Z'
+WHERE device_id = 'device-1'
+AND timestamp BETWEEN '2021-01-01T00:00:00Z' AND '2021-01-01T01:00:00Z';
 ```
 
 Read relative time range:
 
 ```sql
-SELECT
-  value
+SELECT value
 FROM readings
-WHERE
-  device_id='device-1' AND
-  timestamp >= now() - 1h
+WHERE device_id = 'device-1'
+AND timestamp >= NOW() - INTERVAL '1 hour';
 ```
