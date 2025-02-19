@@ -79,6 +79,7 @@ func (c *KafkaReader[T]) Close() {
 	c.reader.Close()
 }
 
+// TODO: dead-letter queue
 // Read reads messages from Kafka and calls the handler function for each message.
 // Return false in the handler to retry the message.
 func (c *KafkaReader[T]) Read(ctx context.Context, handler func(ctx context.Context, data T) error) error {
@@ -97,21 +98,18 @@ func (c *KafkaReader[T]) Read(ctx context.Context, handler func(ctx context.Cont
 		}
 
 		var data T
-		err = json.Unmarshal(msg.Value, &data)
+		err = json.Unmarshal(msg.Value, &data) // TODO: commit message if unmarshal fails to not reprocess the same message
 		if err != nil {
-			log.Printf("Error unmarshalling message: %v", err)
-			continue
+			return err
 		}
 
 		err = handler(ctx, data)
 		if err != nil {
-			slog.Error("error handling message", "error", err)
 			return err
 		}
 
 		err = c.reader.CommitMessages(ctx, msg)
 		if err != nil {
-			slog.Error("error committing message", "error", err)
 			return err
 		}
 		slog.Info("message committed successfully")

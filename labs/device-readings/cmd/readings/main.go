@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"device-readings/internal/api"
+	"device-readings/internal/db"
 	"device-readings/internal/env"
 
 	// "device-readings/internal/db"
@@ -16,7 +17,6 @@ import (
 	"device-readings/internal/readings/repo"
 
 	"github.com/samber/lo"
-	"gorm.io/gorm"
 )
 
 func main() {
@@ -32,8 +32,8 @@ func start() {
 	writer := queue.NewKafkaWriter[[]models.BatchReading](config.Broker, config.Topic)
 	defer writer.Close()
 
-	db := &gorm.DB{} // db := lo.Must(db.New(db.NewDefaultConfig()))
-	repo := repo.NewGorm(db)
+	db := lo.Must(db.New(db.NewDefaultConfig()))
+	repo := lo.Must(repo.NewGorm(db))
 	server := lo.Must(api.New(writer, repo))
 
 	srvErr := make(chan error, 1)
