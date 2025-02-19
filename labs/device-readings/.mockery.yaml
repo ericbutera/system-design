@@ -1,0 +1,23 @@
+with-expecter: true
+inpackage: True
+
+filename: "mock_{{.InterfaceName | lower }}.go"
+dir: "{{.InterfaceDir}}"
+mockname: "Mock{{.InterfaceName}}"
+outpkg: "{{.PackageName}}"
+
+packages:
+  device-readings/internal/readings/db:
+    interfaces:
+      DB:
+
+
+  device-readings/internal/readings/repo:
+    interfaces:
+      Repo:
+
+
+  device-readings/internal/readings/queue:
+    interfaces:
+      BatchReadingWriter:
+      BatchReadingReader:

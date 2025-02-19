@@ -1,2 +1,11 @@
+**/bin/*
+__debug_bin*
+.DS_Store
+.vscode
+.env
+Tiltfile.overrides
+
 hotel-reservation/services/gateway/.gitignore
 hotel-reservation/.gitignore
+
+pg-cdc
