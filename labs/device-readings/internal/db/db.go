@@ -1,25 +1,24 @@
 package db
 
 import (
+	"device-readings/internal/env"
+
 	slogGorm "github.com/orandin/slog-gorm"
-	// "gorm.io/driver/sqlite"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 type Config struct {
-	LogQueries bool
-	// AutoModels []any // Intended to be gorm.Model{}
+	LogQueries bool   `env:"DB_LOG_QUERIES" envDefault:"true"`
+	Dsn        string `env:"DB_DSN" envDefault:"host=timescaledb user=postgres password=password dbname=postgres port=5432 sslmode=disable"`
 }
 
-func NewDefaultConfig() *Config {
-	return &Config{
-		LogQueries: true,
-		// AutoModels: []any{
-		// 	models.BatchReading{},
-		// 	models.Reading{},
-		// },
+func NewFromEnv() (*gorm.DB, error) {
+	config, err := env.New[Config]()
+	if err != nil {
+		return nil, err
 	}
+	return New(config)
 }
 
 func New(config *Config) (*gorm.DB, error) {
@@ -28,18 +27,10 @@ func New(config *Config) (*gorm.DB, error) {
 		opts.Logger = slogGorm.New()
 	}
 
-	// TODO: extract dialect
-	dsn := "host=pg-postgresql user=postgres password=password dbname=postgres port=5432 sslmode=disable" // TODO: env
-	instance, err := gorm.Open(postgres.Open(dsn), opts)
+	instance, err := gorm.Open(postgres.Open(config.Dsn), opts)
 	if err != nil {
 		return nil, err
 	}
-
-	// if config.AutoModels != nil {
-	// 	if err := instance.AutoMigrate(config.AutoModels...); err != nil {
-	// 		return nil, err
-	// 	}
-	// }
 
 	return instance, nil
 }

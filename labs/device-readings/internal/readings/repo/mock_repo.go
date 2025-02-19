@@ -81,65 +81,6 @@ func (_c *MockRepo_GetReadings_Call) RunAndReturn(run func(context.Context, Filt
 	return _c
 }
 
-// GetReadingsByDevice provides a mock function with given fields: ctx, deviceID
-func (_m *MockRepo) GetReadingsByDevice(ctx context.Context, deviceID string) ([]models.Reading, error) {
-	ret := _m.Called(ctx, deviceID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetReadingsByDevice")
-	}
-
-	var r0 []models.Reading
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) ([]models.Reading, error)); ok {
-		return rf(ctx, deviceID)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) []models.Reading); ok {
-		r0 = rf(ctx, deviceID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]models.Reading)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, deviceID)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// MockRepo_GetReadingsByDevice_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetReadingsByDevice'
-type MockRepo_GetReadingsByDevice_Call struct {
-	*mock.Call
-}
-
-// GetReadingsByDevice is a helper method to define mock.On call
-//   - ctx context.Context
-//   - deviceID string
-func (_e *MockRepo_Expecter) GetReadingsByDevice(ctx interface{}, deviceID interface{}) *MockRepo_GetReadingsByDevice_Call {
-	return &MockRepo_GetReadingsByDevice_Call{Call: _e.mock.On("GetReadingsByDevice", ctx, deviceID)}
-}
-
-func (_c *MockRepo_GetReadingsByDevice_Call) Run(run func(ctx context.Context, deviceID string)) *MockRepo_GetReadingsByDevice_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(string))
-	})
-	return _c
-}
-
-func (_c *MockRepo_GetReadingsByDevice_Call) Return(_a0 []models.Reading, _a1 error) *MockRepo_GetReadingsByDevice_Call {
-	_c.Call.Return(_a0, _a1)
-	return _c
-}
-
-func (_c *MockRepo_GetReadingsByDevice_Call) RunAndReturn(run func(context.Context, string) ([]models.Reading, error)) *MockRepo_GetReadingsByDevice_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
 // StoreReadings provides a mock function with given fields: readings
 func (_m *MockRepo) StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error) {
 	ret := _m.Called(readings)

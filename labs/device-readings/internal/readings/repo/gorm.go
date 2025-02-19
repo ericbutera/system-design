@@ -4,7 +4,6 @@ import (
 	"context"
 	"device-readings/internal/readings/models"
 	"errors"
-	"log/slog"
 
 	"gorm.io/gorm"
 )
@@ -14,7 +13,7 @@ type Gorm struct {
 }
 
 func NewGorm(db *gorm.DB) (*Gorm, error) {
-	if err := db.AutoMigrate(&models.Reading{}); err != nil {
+	if err := db.AutoMigrate(models.Reading{}, models.Device{}); err != nil {
 		return nil, err
 	}
 	return &Gorm{
@@ -27,42 +26,43 @@ var (
 )
 
 func (g *Gorm) StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error) {
-	// TODO: save failures for inspection
+	if len(readings) == 0 {
+		return StoreReadingsResult{}, nil
+	}
+
+	var storedReadings []models.Reading
+	for _, reading := range readings {
+		storedReadings = append(storedReadings, models.Reading{
+			DeviceID:    reading.DeviceID,
+			ReadingType: reading.ReadingType,
+			Timestamp:   reading.Timestamp,
+			Value:       float64(reading.Value),
+		})
+	}
+
 	result := StoreReadingsResult{}
 	err := g.db.Transaction(func(tx *gorm.DB) error {
-		for _, reading := range readings {
-			res := tx.Create(models.Reading{
-				DeviceID:    reading.DeviceID,
-				ReadingType: reading.ReadingType,
-				Timestamp:   reading.Timestamp,
-				Value:       reading.Value,
-			})
-			if res.Error != nil {
-				result.Failures++
-				continue
-			}
-			result.Succeed++
+		res := tx.Create(&storedReadings)
+		if res.Error != nil {
+			return res.Error
 		}
-		if result.Failures > 0 {
-			tx.Rollback() // TODO: determine failure threshold before rollback
+
+		if int(res.RowsAffected) < len(readings) {
 			return ErrBatchReadingSaveFailure
 		}
+
+		result.Succeed = len(readings)
 		return nil
 	})
+
 	return result, err
 }
 
 func (g *Gorm) GetReadings(ctx context.Context, filters Filters) ([]models.Reading, error) {
-	slog.Info("getting readings", "filters", filters)
 	var readings []models.Reading
 	res := g.db.Model(&models.Reading{}).Find(&readings)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 	return readings, nil
-}
-
-func (g *Gorm) GetReadingsByDevice(ctx context.Context, deviceID string) ([]models.Reading, error) {
-	slog.Info("getting readings by device", "deviceID", deviceID)
-	return []models.Reading{}, nil
 }

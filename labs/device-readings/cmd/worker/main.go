@@ -31,7 +31,7 @@ func start() {
 
 	slog.Info("starting batch readings worker", "broker", config.Broker, "topic", config.Topic, "group", config.Group)
 
-	db := lo.Must(db.New(db.NewDefaultConfig()))
+	db := lo.Must(db.NewFromEnv())
 	repo := lo.Must(repo.NewGorm(db))
 
 	processor := processor.NewProcessor(reader, repo)

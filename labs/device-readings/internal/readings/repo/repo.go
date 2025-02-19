@@ -29,5 +29,4 @@ type StoreReadingsResult struct {
 type Repo interface {
 	StoreReadings(readings []models.BatchReading) (StoreReadingsResult, error)
 	GetReadings(ctx context.Context, filters Filters) ([]models.Reading, error)
-	GetReadingsByDevice(ctx context.Context, deviceID string) ([]models.Reading, error)
 }

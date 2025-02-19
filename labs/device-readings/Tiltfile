@@ -4,42 +4,25 @@ v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
 v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
 load('ext://go_helper', 'go_compile', 'go_image')
 
-# k8s_resource('kafdrop', port_forwards=9000, resource_deps=['redpanda'])
-# k8s_yaml('./k8s/kafdrop.yaml')
 
 v1alpha1.extension(name='redpanda', repo_name='eb', repo_path='extensions/redpanda')
 load('ext://redpanda', 'redpanda')
 redpanda()
 
+v1alpha1.extension(name='timescaledb', repo_name='eb', repo_path='extensions/timescaledb')
+load('ext://timescaledb', 'timescaledb')
+timescaledb(port_forwards='15432:5432')
+
+v1alpha1.extension(name='kafdrop', repo_name='eb', repo_path='extensions/kafdrop')
+load('ext://kafdrop', 'kafdrop')
+kafdrop(port_forwards='9001:9000')
+
 k8s_yaml('./k8s/readings.yaml')
 go_compile('readings-compile', './cmd/readings', ['./cmd/readings'])
 go_image('readings', './cmd/readings')
-k8s_resource('readings', port_forwards=8080, resource_deps=['readings-compile', 'pg'])
+k8s_resource('readings', port_forwards=8080, resource_deps=['readings-compile', 'timescaledb'])
 
 k8s_yaml('./k8s/worker.yaml')
 go_compile('worker-compile', './cmd/worker', ['./cmd/worker'])
 go_image('worker', './cmd/worker')
-k8s_resource('worker', resource_deps=['worker-compile', 'pg'])
-
-
-load('ext://helm_resource', 'helm_resource', 'helm_repo')
-load('ext://secret', 'secret_from_dict')
-k8s_yaml(secret_from_dict("tilt-pg", inputs = {
-    'postgres-password' : "password"
-}))
-helm_repo('bitnami', 'https://charts.bitnami.com/bitnami')
-helm_resource(
-    name='pg',
-    chart='bitnami/postgresql',
-    namespace='default',
-    flags=[
-        '--set=image.tag=15-debian-11',
-        '--set=global.postgresql.auth.existingSecret=tilt-pg',
-        '--set=primary.persistence.enabled=false',
-        '--set=postgresqlExtendedConf.wal_level=logical',
-        '--set=postgresqlExtendedConf.max_replication_slots=10',
-        '--set=postgresqlExtendedConf.max_wal_senders=10'
-    ],
-    port_forwards=["5432:5432"],
-    labels=['database']
-)
+k8s_resource('worker', resource_deps=['worker-compile', 'timescaledb'])

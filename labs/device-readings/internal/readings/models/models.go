@@ -7,12 +7,19 @@ import (
 	"time"
 )
 
+// https://docs.timescale.com/quick-start/latest/golang/
+type Device struct {
+	ID       int64  `gorm:"primaryKey" json:"id"`
+	DeviceID string `gorm:"uniqueIndex;type:varchar(255)" json:"device_id"`
+	Type     string `gorm:"type:varchar(50)" json:"type"`
+	Location string `gorm:"type:varchar(50)" json:"location"`
+}
+
 type Reading struct {
-	DeviceID    string    `binding:"required"       description:"Device ID"                            example:"device-1"                  json:"device_id"`
-	ReadingType string    `binding:"required"       description:"Type of reading"                      example:"temperature"                json:"reading_type"`
-	Timestamp   time.Time `binding:"required"       description:"Device reported timestamp of reading" example:"2021-01-01T00:00:00-05:00" json:"timestamp"`
-	Value       float32   `binding:"required,min=0" description:"Reading data"                         example:"17"                        json:"count"`
-	// TODO: compare device reported Timestamp to server CreatedAt to determine time integrity; DDIA: unreliable clocks
+	Timestamp   time.Time `gorm:"not null" json:"timestamp"`
+	DeviceID    string    `gorm:"type:varchar(255);index;not null" json:"device_id"`
+	ReadingType string    `gorm:"type:varchar(50);not null" json:"reading_type"`
+	Value       float64   `gorm:"not null" json:"value"`
 }
 
 type BatchReading struct {

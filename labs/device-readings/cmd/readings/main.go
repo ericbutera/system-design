@@ -32,7 +32,7 @@ func start() {
 	writer := queue.NewKafkaWriter[[]models.BatchReading](config.Broker, config.Topic)
 	defer writer.Close()
 
-	db := lo.Must(db.New(db.NewDefaultConfig()))
+	db := lo.Must(db.NewFromEnv())
 	repo := lo.Must(repo.NewGorm(db))
 	server := lo.Must(api.New(writer, repo))
 

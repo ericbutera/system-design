@@ -70,6 +70,9 @@ type GetReadingsResponse struct {
 func (h *Handlers) GetReadings(c *gin.Context) {
 	res, err := h.repo.GetReadings(c.Request.Context(), repo.Filters{
 		DeviceID: c.Query("device_id"),
+		// TODO StartAt:
+		// TODO EndAt:
+		// TODO Relative:
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "unable to get readings"})

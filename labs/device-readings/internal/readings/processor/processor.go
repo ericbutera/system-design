@@ -24,17 +24,15 @@ func NewProcessor(reader *ReaderType, repo repo.Repo) *Processor {
 }
 
 func (p *Processor) Run(ctx context.Context) error {
-	slog.Info("running processor")
 	return p.reader.Read(ctx, p.Handler)
 }
 
 func (p *Processor) Handler(ctx context.Context, batch []models.BatchReading) error {
-	slog.Info("received readings", "readings", batch)
+	slog.Debug("received readings", "count", len(batch))
 	res, err := p.repo.StoreReadings(batch)
 	if err != nil {
-		slog.Error("processor error storing readings", "error", err)
 		return err
 	}
-	slog.Info("processor stored readings", "result", res)
+	slog.Debug("processor stored readings", "result", res)
 	return nil
 }
