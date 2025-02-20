@@ -4,6 +4,7 @@
 
 - [Parking Lot](./parking-garage/)
 - [Device Readings](./labs/device-readings/)
+- [Extract Transform Load (ETL) System](./labs/etl/)
 
 ## System Design
 
