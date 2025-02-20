@@ -1,0 +1,32 @@
+[
+    {
+        "asset_id": "qualys-301",
+        "fqdn": "mailserver.example.com",
+        "ip_address": "192.168.2.11",
+        "os": "Windows Server 2019"
+    },
+    {
+        "asset_id": "qualys-302",
+        "fqdn": "backup-server",
+        "ip_address": "192.168.2.12",
+        "os": "Ubuntu 18.04"
+    },
+    {
+        "asset_id": "qualys-303",
+        "fqdn": "kubernetes-master",
+        "ip_address": "192.168.2.13",
+        "os": "Container OS"
+    },
+    {
+        "asset_id": "qualys-304",
+        "fqdn": "webserver-node",
+        "ip_address": "192.168.2.14",
+        "os": "RHEL 9"
+    },
+    {
+        "asset_id": "qualys-305",
+        "fqdn": "test-bench",
+        "ip_address": "192.168.2.15",
+        "os": "macOS Sonoma"
+    }
+]

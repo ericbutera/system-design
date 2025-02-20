@@ -1,0 +1,37 @@
+[
+    {
+        "device_id": "cs-201",
+        "hostname": "user-laptop1",
+        "ip": "172.16.1.101",
+        "os": "Windows 10",
+        "status": "Online"
+    },
+    {
+        "device_id": "cs-202",
+        "hostname": "user-laptop2",
+        "ip": "172.16.1.102",
+        "os": "Windows 11",
+        "status": "Offline"
+    },
+    {
+        "device_id": "cs-203",
+        "hostname": "server-node1",
+        "ip": "172.16.1.103",
+        "os": "Ubuntu 22.04",
+        "status": "Online"
+    },
+    {
+        "device_id": "cs-204",
+        "hostname": "mobile-device1",
+        "ip": "172.16.1.104",
+        "os": "iOS 17",
+        "status": "Online"
+    },
+    {
+        "device_id": "cs-205",
+        "hostname": "test-vm",
+        "ip": "172.16.1.105",
+        "os": "Debian 10",
+        "status": "Offline"
+    }
+]

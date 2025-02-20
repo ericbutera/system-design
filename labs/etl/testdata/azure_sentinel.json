@@ -1,0 +1,66 @@
+[
+    {
+        "incident_id": "azsent-501",
+        "asset": "vm-web-01",
+        "ip_address": "10.100.1.10",
+        "threat_level": "High",
+        "last_detected": "2025-02-19T10:30:00Z",
+        "alerts": [
+            {
+                "alert_id": "AL-1001",
+                "description": "Brute force attack detected",
+                "severity": "High"
+            }
+        ]
+    },
+    {
+        "incident_id": "azsent-502",
+        "asset": "db-cluster-node",
+        "ip_address": "10.100.1.11",
+        "threat_level": "Medium",
+        "last_detected": "2025-02-18T09:45:00Z",
+        "alerts": [
+            {
+                "alert_id": "AL-1002",
+                "description": "SQL injection attempt",
+                "severity": "Medium"
+            }
+        ]
+    },
+    {
+        "incident_id": "azsent-503",
+        "asset": "iot-edge-device",
+        "ip_address": "10.100.1.12",
+        "threat_level": "Low",
+        "last_detected": "2025-02-17T14:20:00Z",
+        "alerts": []
+    },
+    {
+        "incident_id": "azsent-504",
+        "asset": "vpn-gateway",
+        "ip_address": "10.100.1.13",
+        "threat_level": "Critical",
+        "last_detected": "2025-02-16T16:30:00Z",
+        "alerts": [
+            {
+                "alert_id": "AL-1003",
+                "description": "Unauthorized access detected",
+                "severity": "Critical"
+            }
+        ]
+    },
+    {
+        "incident_id": "azsent-505",
+        "asset": "workstation-dev",
+        "ip_address": "10.100.1.14",
+        "threat_level": "Medium",
+        "last_detected": "2025-02-15T11:10:00Z",
+        "alerts": [
+            {
+                "alert_id": "AL-1004",
+                "description": "Phishing attempt detected",
+                "severity": "Medium"
+            }
+        ]
+    }
+]

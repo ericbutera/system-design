@@ -1,0 +1,53 @@
+[
+    {
+        "device_id": "msdef-601",
+        "hostname": "laptop-user1",
+        "ip_address": "192.168.50.10",
+        "os": "Windows 10",
+        "risk_level": "Medium",
+        "last_seen": "2025-02-19T12:00:00Z",
+        "threats_detected": [
+            "Trojan.Win32.Generic"
+        ]
+    },
+    {
+        "device_id": "msdef-602",
+        "hostname": "server-backup",
+        "ip_address": "192.168.50.11",
+        "os": "Windows Server 2019",
+        "risk_level": "Low",
+        "last_seen": "2025-02-18T08:45:00Z",
+        "threats_detected": []
+    },
+    {
+        "device_id": "msdef-603",
+        "hostname": "vm-container-host",
+        "ip_address": "192.168.50.12",
+        "os": "Windows Server 2022",
+        "risk_level": "High",
+        "last_seen": "2025-02-17T17:30:00Z",
+        "threats_detected": [
+            "Exploit.CVE-2023-4567"
+        ]
+    },
+    {
+        "device_id": "msdef-604",
+        "hostname": "dev-workstation",
+        "ip_address": "192.168.50.13",
+        "os": "macOS Ventura",
+        "risk_level": "Medium",
+        "last_seen": "2025-02-16T14:15:00Z",
+        "threats_detected": [
+            "Adware.Mac.Generic"
+        ]
+    },
+    {
+        "device_id": "msdef-605",
+        "hostname": "test-sandbox",
+        "ip_address": "192.168.50.14",
+        "os": "Linux Ubuntu 22.04",
+        "risk_level": "Low",
+        "last_seen": "2025-02-15T10:05:00Z",
+        "threats_detected": []
+    }
+]
