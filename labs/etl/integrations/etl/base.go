@@ -9,6 +9,7 @@ import (
 
 	"github.com/ericbutera/system-design/labs/etl/integrations"
 	i "github.com/ericbutera/system-design/labs/etl/integrations"
+	sdk "github.com/ericbutera/system-design/labs/etl/saas"
 )
 
 type Asset struct {
@@ -50,8 +51,11 @@ type Etl interface {
 	Load(params LoadParams) (LoadResult, error)
 }
 
-func New(integration i.Integrations) (Etl, error) {
-	base := BaseEtl{integration: integration}
+func New(integration i.Integrations, saasClient sdk.Platform) (Etl, error) {
+	base := BaseEtl{
+		integration: integration,
+		saasClient:  saasClient,
+	}
 
 	switch integration {
 	case i.AzureSentinel:
@@ -73,6 +77,7 @@ func New(integration i.Integrations) (Etl, error) {
 
 type BaseEtl struct {
 	integration integrations.Integrations
+	saasClient  sdk.Platform
 }
 
 func (b *BaseEtl) Extract(params ExtractParams) (ExtractResult, error) {
@@ -98,7 +103,12 @@ func (b *BaseEtl) Transform(params TransformParams) (TransformResult, error) {
 func (b *BaseEtl) Load(params LoadParams) (LoadResult, error) {
 	// note: this would normally write data to a warehouse
 	for _, asset := range params.Assets {
-		slog.Info("Loading asset", "asset", asset)
+		_ = b.saasClient.SaveAsset(&sdk.Asset{
+			VendorID:  asset.VendorID,
+			IPAddress: asset.IPAddress,
+			Hostname:  asset.Hostname,
+			OS:        asset.OS,
+		})
 	}
 	return LoadResult{}, nil
 }
@@ -173,4 +183,8 @@ func GetBlobs(path string) (Blobs, error) {
 		blobs = append(blobs, data)
 	}
 	return blobs, nil
+}
+
+func SaveAsset(asset Asset) {
+	slog.Debug("Saving asset", "asset", asset)
 }
