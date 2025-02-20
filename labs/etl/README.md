@@ -60,3 +60,76 @@ One strategy is to have a monotonic counter for each ETL process. As assets are 
 - run type
   - incremental run since last known offset
   - full run for initial run or backfill reconciliation
+
+### TODO: Concurrency
+
+The current implementation is syncronous. No data is transformed and loaded until the entirety of the extraction is complete. This is not optimal. In past experience I have seen batch processes take close to 24 hours to complete.
+
+Aside: In one case I saw a process that took over 24 which caused the next to the batch interval to miss. This can be addressed by ensuring the backfill can continue to run while new instances of "incremental" runs are started. It also requires that upserts into the SaaS platform ensure only newest data is saved, otherwise the backfill will overwrite the latest data.
+
+```mermaid
+---
+title: Synchronous Workflow
+---
+flowchart LR
+  ETL --> Extract --> PageOne --> PageTwo
+  subgraph PageOne
+    direction LR
+    ExtractPage1 --> Transform1
+    Transform1 --> Load1
+  end
+  subgraph PageTwo
+    direction LR
+    ExtractPage2 --> Transform2
+    Transform2 --> Load2
+  end
+```
+
+Let's explore how to begin transform and loading while the extract is still running.
+
+```mermaid
+---
+title: Asynchronous Workflow
+---
+flowchart LR
+  ETL --> WorkerPool
+  WorkerPool --> Worker1
+  WorkerPool --> Worker2
+
+  subgraph Worker1
+    direction LR
+    ExtractPage1 --> Transform1
+    Transform1 --> Load1
+  end
+
+  subgraph Worker2
+    direction LR
+    ExtractPage2 --> Transform2
+    Transform2 --> Load2
+  end
+```
+
+By adding a worker pool to the extraction process, it is now possible to run multiple extractions at the same time. This isn't always the case though as a lot of API's use cursors that cannot be known until the previous page is fetched. But, in this contrived example we have effectively reduced the runtime by 50%.
+
+Futher enhancements can be made by allowing concurrency during the load phase. An easy way to do this is to have the SaaS Load API utilize a queue.
+
+A queue like Kafka or Pubsub allows horizontally scaling the load process to meet burst writes. It also allows the downstream ingestion process to scale horizontally using a worker group to process the queue using the most cost efficient compute.
+
+```mermaid
+flowchart LR
+  Load --> SaveAsset
+
+  subgraph ETL
+    direction LR
+    Extract --> Transform --> Load
+  end
+
+  subgraph SaaS
+    direction LR
+    SaveAsset --> Enqueue
+    subgraph Ingestion
+      Enqueue --> AssetWorkers
+      AssetWorkers --> DB
+    end
+  end
+```
