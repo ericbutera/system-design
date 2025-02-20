@@ -42,6 +42,18 @@ Load:
 - store high quality data for downstream consumers
 - the destination can be anything but usually is either a data warehouse or a real-time DB
 
+## Rate Limits
+
+Rate limiting ETL can be a challenge. Vendor systems can have global rate limits, user rate limits, and per service rate limits. These all need to be accounted for in the ETL system.
+
+A common approach is to have a shared state rate limiter (Redis) that can keep track of rate limits at each level across concurrent runs.
+
+## Deduplication
+
+Another common issue is deduplication. A lot of times it isn't that big of a deal to update an asset multiple times, but there are other times where two different processes might try to update the same asset.
+
+One strategy is to have a monotonic counter for each ETL process. As assets are updated ensure that they are persisted with the counter of the current ETL process. If the counter is less than the current ETL process, then the asset has already been updated and can be skipped. If this happens, be sure to emit an event so this descision can be audited.
+
 ## Future Enhancements
 
 - concurrency control (multiple data fetching, uploads)

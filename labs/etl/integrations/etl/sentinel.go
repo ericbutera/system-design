@@ -1,10 +1,30 @@
 package etl
 
-import (
-	"log/slog"
-)
+// Azure SDK:
+// "github.com/Azure/azure-sdk-for-go/sdk/azcore"
+// "github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+// "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/securityinsights/armsecurityinsights"
 
 type AzureSentinelEtl struct{ BaseEtl }
+
+/*
+Example implementation of data extraction from Azure Sentinel:
+- heartbeat page data for resuming on error
+- concurrency on page requests
+
+func (e *AzureSentinelEtl) Load(params LoadParams) (LoadResult, error) {
+	// https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/securityinsights/armsecurityinsights
+    client, _ := armsecurityinsights.NewIncidentsClient(subscription, cred, nil)
+    pager := client.NewListPager(group, workspace, nil)
+    for pager.More() {
+        page, _ := pager.NextPage(ctx)
+        for _, incident := range page.Value {
+			// https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/securityinsights/armsecurityinsights#Incident
+            fmt.Printf("Incident ID: %s\n", *incident.ID)
+        }
+    }
+}
+*/
 
 type AzureAsset struct {
 	IncidentID   string       `json:"incident_id" example:"azsent-501"`
@@ -23,7 +43,6 @@ type AzureAlert struct {
 
 func (e *AzureSentinelEtl) Transform(params TransformParams) (TransformResult, error) {
 	return Transformer(params, func(data []AzureAsset, assets *[]Asset) error {
-		slog.Info("Transforming data", "data", data)
 		for _, asset := range data {
 			*assets = append(*assets, Asset{
 				Integration: e.integration,

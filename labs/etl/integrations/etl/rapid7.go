@@ -1,7 +1,5 @@
 package etl
 
-import "log/slog"
-
 type Rapid7InsightVMEtl struct{ BaseEtl }
 
 type Rapid7InsightVMAsset struct {
@@ -15,7 +13,6 @@ type Rapid7InsightVMAsset struct {
 
 func (e *Rapid7InsightVMEtl) Transform(params TransformParams) (TransformResult, error) {
 	return Transformer(params, func(data []Rapid7InsightVMAsset, assets *[]Asset) error {
-		slog.Info("Transforming data", "data", data)
 		for _, asset := range data {
 			*assets = append(*assets, Asset{
 				Integration: e.integration,

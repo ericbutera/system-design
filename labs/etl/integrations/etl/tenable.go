@@ -1,7 +1,5 @@
 package etl
 
-import "log/slog"
-
 type TenableNessusEtl struct{ BaseEtl }
 
 type TenableNessusAsset struct {
@@ -22,7 +20,6 @@ type TenableNessusVulnerability struct {
 
 func (e *TenableNessusEtl) Transform(params TransformParams) (TransformResult, error) {
 	return Transformer(params, func(data []TenableNessusAsset, assets *[]Asset) error {
-		slog.Info("Transforming data", "data", data)
 		for _, asset := range data {
 			*assets = append(*assets, Asset{
 				Integration: e.integration,
