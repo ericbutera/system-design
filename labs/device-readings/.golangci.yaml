@@ -1,0 +1,95 @@
+# https://golangci-lint.run/usage/linters/
+linters:
+  enable-all: true
+  disable:
+    - exportloopref
+    - godot # adds period at end of comments (no thanks)
+    - godox # bans TODO
+    - exhaustruct
+    - depguard
+    - nlreturn
+    - gomoddirectives
+    - wsl # only one cuddle assignment allowed before range statement
+    - wrapcheck
+    - nonamedreturns # i like these sometimes
+    - paralleltest
+    - varnamelen
+    - ireturn # not allowed to return interfaces
+    - tagliatelle # json(camel): got 'feed_id' want 'feedId'
+    - gochecknoglobals
+    - interfacebloat
+    - perfsprint
+    - nilnil
+    - stylecheck # feedId -> feedID
+    - thelper
+    - intrange # for x := 0; x < count; x++ -> for x := range make([]int, count)
+    - lll
+
+linters-settings:
+  tagalign:
+    align: true
+    sort: false
+    strict: false
+  # https://github.com/mgechev/revive/blob/master/RULES_DESCRIPTIONS.md
+  revive:
+    enable-all-rules: true
+    rules:
+      - name: add-constant
+        disabled: true
+      - name: flag-parameter
+        exclude:
+          - "rpc/pkg/client/client.go"
+      - name: import-shadowing
+        disabled: true
+      - name: import-alias-naming
+        disabled: true
+      - name: line-length-limit
+        disabled: true
+      - name: unchecked-type-assertion
+        exclude:
+          - '_test\\.go$'
+      - name: unused-receiver
+        exclude:
+          - graph/extensions/prometheus/prometheus.go
+      - name: max-public-structs
+        disabled: true
+      - name: comment-spacings
+        disabled: true
+      # - name: var-naming
+      #   severity: warning
+      #   disabled: false
+      #   exclude:
+      #     - \\root\\.go$
+      #   arguments:
+      #     - ["ID", "RPC", "URL", "GUID", "HTML"] # AllowList
+      #     - ["VM"] # DenyList
+      #     - - upperCaseConst: true # Extra parameter (upperCaseConst|skipPackageNameChecks)
+
+      # TODO: temporary disabled
+      - name: var-naming
+        disabled: true
+      - name: flag-parameter
+        disabled: true
+      - name: cognitive-complexity
+        disabled: true
+
+# https://golangci-lint.run/usage/configuration/#issues-configuration
+issues:
+  exclude-rules:
+    - path: api/
+      linters:
+        - depguard
+        - revive
+    - path: cli/
+      linters:
+        - revive
+    - path: services/graph/graph/schema.resolvers_test.go
+      linters:
+        - revive
+  exclude-files:
+    - ".*\\.pb\\.go$"
+    - pkg/feeds/v1/service_grpc.pb.go
+    - services/graph/extensions/prometheus/prometheus.go
+    - internal/goverter/goverter.go
+  whole-files: true
+  fix: true

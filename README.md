@@ -2,13 +2,13 @@
 
 ## Low Level Design (LLD) / Object Oriented System Design (OOSD)
 
-- [Parking Lot](./parking-garage/)
+- [Parking Lot](./labs/parking-garage/)
 - [Device Readings](./labs/device-readings/)
 - [Extract Transform Load (ETL) System](./labs/etl/)
 
 ## System Design
 
-- [Hotel Reservation System](./hotel-reservation/)
+- [Hotel Reservation System](./labs/hotel-reservation/)
 
 ---
 

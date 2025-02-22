@@ -69,6 +69,7 @@ func NewKafkaReader[T any](broker, topic, group string) *KafkaReader[T] {
 		MaxBytes: MaxBytes,
 		// StartOffset: kafka.FirstOffset, // this can be used to reprocess messages
 		// CommitInterval: 0,
+		// TODO no auto-commit! only ack when side-effects are done
 	})
 	return &KafkaReader[T]{
 		reader: reader,
