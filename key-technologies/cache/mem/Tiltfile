@@ -1,0 +1,13 @@
+# v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
+v1alpha1.extension_repo('eb', url='https://github.com/ericbutera/tilt')
+
+v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
+load('ext://go_helper', 'go_compile', 'go_image', 'go_service')
+
+v1alpha1.extension(name='redis', repo_name='eb', repo_path='extensions/redis')
+load('ext://redis', 'redis')
+redis()
+
+go_compile('app-compile', './cmd/app', ['./cmd/app'])
+go_image('app', './cmd/app')
+go_service('app', port_forwards=[], resource_deps=['app-compile', 'redis'])
