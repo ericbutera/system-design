@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"device-readings/internal/readings/models"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -14,9 +15,6 @@ type Gorm struct {
 }
 
 func NewGorm(db *gorm.DB) (*Gorm, error) {
-	if err := db.AutoMigrate(models.Reading{}, models.Device{}); err != nil {
-		return nil, err
-	}
 	return &Gorm{
 		db: db,
 	}, nil
