@@ -1,0 +1,18 @@
+# v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
+v1alpha1.extension_repo('eb', url='https://github.com/ericbutera/tilt')
+
+v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
+load('ext://go_helper', 'go_compile', 'go_image', 'go_service')
+
+
+v1alpha1.extension(name='nats', repo_name='eb', repo_path='extensions/nats')
+load('ext://nats', 'nats')
+nats()
+
+go_compile('pub-compile', './cmd/pub', ['./cmd/pub'])
+go_image('pub', './cmd/pub')
+go_service('pub', port_forwards=[], resource_deps=['pub-compile', 'nats'])
+
+go_compile('sub-compile', './cmd/sub', ['./cmd/sub'])
+go_image('sub', './cmd/sub')
+go_service('sub', port_forwards=[], resource_deps=['sub-compile', 'pub'])
