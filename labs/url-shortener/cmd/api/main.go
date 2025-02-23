@@ -11,11 +11,14 @@ import (
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/api"
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/db"
 	"github.com/samber/lo"
+	"golang.org/x/sync/errgroup"
 )
 
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+
+	eg, ctx := errgroup.WithContext(ctx)
 
 	var config api.Config
 	lo.Must0(env.Parse(&config))
@@ -25,14 +28,18 @@ func main() {
 	svc := api.New(config, repo)
 	server := svc.Server()
 
-	srvErr := make(chan error, 1)
-	go func() { srvErr <- server.Run() }()
+	eg.Go(func() error {
+		return server.Run()
+	})
 
-	select {
-	case err := <-srvErr:
+	eg.Go(func() error {
+		<-ctx.Done()
+		slog.Info("shutting down")
+		return ctx.Err()
+	})
+
+	if err := eg.Wait(); err != nil {
 		slog.Error("server error", "error", err)
 		os.Exit(1)
-	case <-ctx.Done():
-		slog.Info("shutting down")
 	}
 }
