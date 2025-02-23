@@ -2,6 +2,7 @@ package db
 
 import (
 	"errors"
+	"log/slog"
 	"strings"
 
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/base62"
@@ -42,6 +43,15 @@ func (d *DB) GenerateSlug() (*SlugResult, error) {
 }
 
 func (d *DB) CreateURL(url *models.URL) error {
+	if url.Slug == "" {
+		slug, err := d.GenerateSlug()
+		if err != nil {
+			return err
+		}
+		slog.Debug("generated slug", "slug", slug.Slug, "counter", slug.Counter)
+		url.Slug = slug.Slug
+	}
+
 	res := d.db.Create(&url)
 	if res.Error != nil {
 		if strings.Contains(res.Error.Error(), "violates unique constraint") {
