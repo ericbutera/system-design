@@ -9,6 +9,7 @@
 ## System Design
 
 - [Hotel Reservation System](./labs/hotel-reservation/)
+- [URL Shortener](./labs/url-shortener/)
 
 ---
 
