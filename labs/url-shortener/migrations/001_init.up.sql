@@ -2,8 +2,8 @@ CREATE TABLE
     users (id BIGINT PRIMARY KEY);
 
 CREATE TABLE
-    urls (
-        slug CHAR(11) NOT NULL PRIMARY KEY,
+    urls_v0 (
+        slug VARCHAR(11) NOT NULL PRIMARY KEY,
         long VARCHAR(2048) NOT NULL,
         user_id BIGINT REFERENCES users (id),
         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -11,13 +11,26 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    counter (value BIGINT NOT NULL);
+    urls_v1 (
+        slug VARCHAR(11) NOT NULL PRIMARY KEY,
+        long VARCHAR(2048) NOT NULL,
+        user_id BIGINT REFERENCES users (id),
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP
+    );
 
-CREATE INDEX idx_slug ON urls (slug);
+CREATE TABLE
+    urls_v2 (
+        slug VARCHAR(11) NOT NULL PRIMARY KEY,
+        long VARCHAR(2048) NOT NULL,
+        user_id BIGINT REFERENCES users (id),
+        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP
+    );
 
 CREATE TABLE
     url_stats (
-        slug CHAR(11) REFERENCES urls (slug),
+        slug VARCHAR(11) REFERENCES urls_v1 (slug),
         view_count BIGINT
     );
 

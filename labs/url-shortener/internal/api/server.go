@@ -2,7 +2,7 @@ package api
 
 import (
 	"errors"
-	"log/slog"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -45,11 +45,16 @@ type CreateURLResponse struct {
 }
 
 func (a *API) Server() *gin.Engine {
-	router := gin.Default()
+	router := gin.New() // router.Use(gin.Recovery())
 
-	router.POST("/v1/urls", a.CreateURL)
-	router.GET("/:slug", a.Redirect)
-	router.GET("/v1/urls/:slug/stats", a.GetStats)
+	router.POST("/noop", func(c *gin.Context) { c.Status(http.StatusOK) })
+	router.POST("/v1/urls", a.CreateURL_PG_Counter)
+	router.POST("/beta/urls/random-generator", a.CreateURL_RandomGenerator)
+	router.POST("/beta/urls/in-proc", a.CreateURL_AtomicCounter)
+
+	router.GET("/v1/:slug", a.Redirect)
+
+	// TODO: router.GET("/v1/urls/:slug/stats", a.GetStats)
 
 	return router
 }
@@ -74,22 +79,27 @@ func (a *API) GetStats(c *gin.Context) {
 	c.JSON(http.StatusOK, stats)
 }
 
-func (a *API) CreateURL(c *gin.Context) {
+func URLFromRequest(c *gin.Context) (*models.URL, error) {
 	// TODO: sanitize url (normalize for deduplication, prevent XSS, open redirect)
 	var req CreateURLRequest
 	if err := c.ShouldBindWith(&req, binding.JSON); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
-		return
+		return nil, err
 	}
-
-	url := &models.URL{
+	return &models.URL{
 		Long:      req.Long,
 		Slug:      req.Slug,
 		ExpiresAt: req.ExpiresAt,
 		UserID:    UserID,
-	}
-	err := a.repo.CreateURL(url)
+	}, nil
+}
+
+func handleCreate(c *gin.Context, createFn func(*models.URL) error, respFn func(*models.URL) *CreateURLResponse) {
+	url, err := URLFromRequest(c)
 	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"errors": err.Error()})
+		return
+	}
+	if err := createFn(url); err != nil {
 		if errors.Is(err, db.ErrDuplicate) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "url already exists"})
 			return
@@ -97,16 +107,33 @@ func (a *API) CreateURL(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to create url"})
 		return
 	}
+	c.JSON(http.StatusOK, respFn(url))
+}
 
-	c.JSON(http.StatusOK, &CreateURLResponse{
-		Slug:  url.Slug,
-		Short: a.config.ApiUrl + "/" + url.Slug,
-		Long:  url.Long,
-	})
+func (a *API) handleCreateResponse(url *models.URL) *CreateURLResponse {
+	return &CreateURLResponse{
+		Slug:      url.Slug,
+		Short:     fmt.Sprintf("%s/%s", a.config.ApiUrl, url.Slug),
+		Long:      url.Long,
+		ExpiresAt: url.ExpiresAt,
+	}
+}
+
+func (a *API) CreateURL_PG_Counter(c *gin.Context) {
+	handleCreate(c, a.repo.CreateURL_PG_Counter, a.handleCreateResponse)
+}
+
+func (a *API) CreateURL_RandomGenerator(c *gin.Context) {
+	handleCreate(c, a.repo.CreateURL_RandomGenerator, a.handleCreateResponse)
+}
+
+func (a *API) CreateURL_AtomicCounter(c *gin.Context) {
+	handleCreate(c, a.repo.CreateURL_AtomicCounter, a.handleCreateResponse)
 }
 
 func (a *API) Redirect(c *gin.Context) {
-	url, err := a.repo.GetURL(c.Param("slug"))
+	slug := c.Param("slug")
+	url, err := a.repo.GetURL(slug)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "url not found"})
@@ -115,8 +142,8 @@ func (a *API) Redirect(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to get url"})
 		return
 	}
-	slog.Debug("redirecting", "slug", url.Slug, "long", url.Long)
 
 	// TODO: increment stats
+
 	c.Redirect(http.StatusFound, url.Long)
 }

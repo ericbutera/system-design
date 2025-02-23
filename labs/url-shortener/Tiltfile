@@ -17,7 +17,10 @@ golang_migrate(
     resource_deps=['postgres'],
 )
 
-env_vars = {"DSN": DSN}
+env_vars = {
+    "DSN": DSN,
+    "GIN_MODE":"release",
+}
 
 go_compile('api-compile', './cmd/api', ['./cmd/api'])
 go_image('api', './cmd/api')

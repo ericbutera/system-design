@@ -2,8 +2,8 @@ package db
 
 import (
 	"errors"
-	"log/slog"
-	"strings"
+	"math/rand"
+	"sync/atomic"
 
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/base62"
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/models"
@@ -14,6 +14,7 @@ import (
 var (
 	ErrDuplicate = errors.New("duplicate slug")
 	ErrNotFound  = errors.New("not found")
+	Counter      atomic.Uint64
 )
 
 type DB struct {
@@ -42,41 +43,22 @@ func (d *DB) GenerateSlug() (*SlugResult, error) {
 	}, nil
 }
 
-func (d *DB) CreateURL(url *models.URL) error {
-	if url.Slug == "" {
-		slug, err := d.GenerateSlug()
-		if err != nil {
-			return err
-		}
-		slog.Debug("generated slug", "slug", slug.Slug, "counter", slug.Counter)
-		url.Slug = slug.Slug
-	}
-
-	res := d.db.Create(&url)
-	if res.Error != nil {
-		if strings.Contains(res.Error.Error(), "violates unique constraint") {
-			return ErrDuplicate
-		}
-	}
-	return nil
-}
-
 func (d *DB) GetURL(slug string) (*models.URL, error) {
-	var url models.URL
-	res := d.db.Where("slug = ?", slug).First(&url)
+	var url_v1 models.URL
+	res := d.db.Table("urls_v1").Where("slug = ?", slug).First(&url_v1)
 	if res.Error != nil {
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 			return nil, ErrNotFound
 		}
 		return nil, res.Error
 	}
-	return &url, nil
+	return &url_v1, nil
 }
 
 func (d *DB) GetStats(slug string) (*models.URLStats, error) {
 	panic("not implemented")
 	// var stats models.URLStats
-	// res := d.db.Where("slug = ?", slug).First(&stats)
+	// res := d.db.Table("urls_v1").Where("slug = ?", slug).First(&stats)
 	// if res.Error != nil {
 	// 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 	// 		return nil, ErrNotFound
@@ -84,4 +66,50 @@ func (d *DB) GetStats(slug string) (*models.URLStats, error) {
 	// 	return nil, res.Error
 	// }
 	// return &stats, nil
+}
+
+// Random generator. Collision risk.
+func (d *DB) CreateURL_RandomGenerator(url *models.URL) error {
+	counter := rand.Intn(1_000_000_000_000)
+	slug := base62.EncodeInt64(int64(counter))
+	url.Slug = slug
+	return d.createURL("urls_v0", url)
+}
+
+// Counter using PG sequence. Durable and safe. Unsure of performance.
+func (d *DB) CreateURL_PG_Counter(url *models.URL) error {
+	if url.Slug == "" {
+		slug, err := d.GenerateSlug()
+		if err != nil {
+			return err
+		}
+		url.Slug = slug.Slug
+	}
+	return d.createURL("urls_v1", url)
+}
+
+// In-process counter. Everything breaks if the app crashes or needs autoscaling.
+func (d *DB) CreateURL_AtomicCounter(url *models.URL) error {
+	Counter.Add(1)
+	counter := Counter.Load()
+	slug := base62.EncodeInt64(int64(counter))
+	url.Slug = slug
+	return d.createURL("urls_v2", url)
+}
+
+func (d *DB) createURL(table string, url *models.URL) error {
+	// TODO: support expires_at
+	sql := "INSERT INTO " + table + " (slug, long, user_id, expires_at) VALUES (?, ?, ?, ?)"
+	res := d.db.Exec(sql, url.Slug, url.Long, url.UserID, url.ExpiresAt)
+	if res.Error != nil {
+		return res.Error
+	}
+	if res.RowsAffected == 0 {
+		return errors.New("no rows affected")
+	}
+	return nil
+}
+
+func init() {
+	Counter.Add(1)
 }
