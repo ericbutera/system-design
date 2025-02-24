@@ -4,6 +4,9 @@
 
 - [ ] User can enter a URL and get a shortened URL
 - [ ] User can enter a shortened URL and get redirected to the original URL
+
+-- below the line --
+
 - [ ] Support expiry of shortened URLs
 - [ ] User can see how many times a shortened URL has been used
 - [ ] Allow custom short URLs
@@ -60,4 +63,5 @@ User
 
 ## Deep Dives
 
-TODO
+- Use read-through cache for long URLs (LRU eviction policy)
+- Analytics use queue to not block redirect response
