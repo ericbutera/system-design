@@ -1,6 +1,7 @@
 FROM grafana/k6:latest
 WORKDIR /app
 
-COPY script.js .
+COPY entrypoint.sh .
+COPY *.js .
 
-ENTRYPOINT [ "k6", "run", "/app/script.js" ]
+ENTRYPOINT [ "/app/entrypoint.sh" ]

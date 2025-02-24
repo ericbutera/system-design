@@ -13,24 +13,15 @@ export let options = {
 	],
 };
 
-function randomString(length, charset = "") {
-	if (!charset) charset = "abcdefghijklmnopqrstuvwxyz";
-	let res = "";
-	while (length--) res += charset[(Math.random() * charset.length) | 0];
-	return res;
-}
-
 export default function () {
 	group("/v1/urls", () => {
 		{
 			let url = API_HOST + `/v1/test`;
-			let request = http.get(url);
+			let request = http.get(url, { redirects: 0 });
 
 			check(request, {
 				OK: (r) => r.status === 302 && r.headers["Location"],
 			});
-
-			sleep(SLEEP_DURATION);
 		}
 	});
 }

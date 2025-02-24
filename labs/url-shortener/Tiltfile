@@ -36,3 +36,6 @@ go_service('api',
 go_compile('cli-compile', './cmd/cli', ['./cmd/cli'])
 go_image('cli', './cmd/cli')
 go_job('cli', resource_deps=['cli-compile', 'api'])
+
+docker_build('k6', 'k6')
+k8s_yaml('k6/job.yaml')
