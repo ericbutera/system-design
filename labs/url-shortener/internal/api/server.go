@@ -29,8 +29,9 @@ func New(config Config, repo *db.DB) *API {
 }
 
 type Config struct {
-	ApiUrl string `env:"API_URL" envDefault:"http://api:8080"`
-	DSN    string `env:"DSN"`
+	ApiUrl    string `env:"API_URL" envDefault:"http://api:8080"`
+	DSN       string `env:"DSN"`
+	RedisAddr string `env:"REDIS_ADDR" envDefault:"redis-master:6379"`
 }
 
 type CreateURLRequest struct {
@@ -133,7 +134,7 @@ func (a *API) CreateURL_AtomicCounter(c *gin.Context) {
 
 func (a *API) Redirect(c *gin.Context) {
 	slug := c.Param("slug")
-	url, err := a.repo.GetURL(slug)
+	url, err := a.repo.GetURL(c.Request.Context(), slug)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "url not found"})
@@ -145,5 +146,5 @@ func (a *API) Redirect(c *gin.Context) {
 
 	// TODO: increment stats
 
-	c.Redirect(http.StatusFound, url.Long)
+	c.Redirect(http.StatusFound, url)
 }

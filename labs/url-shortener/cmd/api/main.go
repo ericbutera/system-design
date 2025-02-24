@@ -10,6 +10,7 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/api"
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/db"
+	"github.com/redis/go-redis/v9"
 	"github.com/samber/lo"
 	"golang.org/x/sync/errgroup"
 )
@@ -23,7 +24,8 @@ func main() {
 	var config api.Config
 	lo.Must0(env.Parse(&config))
 
-	repo := lo.Must(db.New(config.DSN))
+	rdb := lo.Must(getRedis(ctx, config))
+	repo := lo.Must(db.New(config.DSN, rdb))
 
 	svc := api.New(config, repo)
 	server := svc.Server()
@@ -42,4 +44,15 @@ func main() {
 		slog.Error("server error", "error", err)
 		os.Exit(1)
 	}
+}
+
+func getRedis(ctx context.Context, config api.Config) (*redis.Client, error) {
+	rdb := redis.NewClient(&redis.Options{
+		Addr: config.RedisAddr,
+	})
+	err := rdb.ConfigSet(ctx, "maxmemory-policy", "allkeys-lru").Err()
+	if err != nil {
+		return nil, err
+	}
+	return rdb, nil
 }

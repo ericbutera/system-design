@@ -1,12 +1,15 @@
 package db
 
 import (
+	"context"
 	"errors"
+	"log/slog"
 	"math/rand"
 	"sync/atomic"
 
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/base62"
 	"github.com/ericbutera/system-design/labs/url-shortener/internal/models"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,12 +21,16 @@ var (
 )
 
 type DB struct {
-	db *gorm.DB
+	db  *gorm.DB
+	rdb *redis.Client
 }
 
-func New(dsn string) (*DB, error) {
+func New(dsn string, rdb *redis.Client) (*DB, error) {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	return &DB{db: db}, err
+	return &DB{
+		db:  db,
+		rdb: rdb,
+	}, err
 }
 
 type SlugResult struct {
@@ -43,16 +50,28 @@ func (d *DB) GenerateSlug() (*SlugResult, error) {
 	}, nil
 }
 
-func (d *DB) GetURL(slug string) (*models.URL, error) {
-	var url_v1 models.URL
-	res := d.db.Table("urls_v1").Where("slug = ?", slug).First(&url_v1)
+// Fetch the long url paired with a read-through cache
+func (d *DB) GetURL(ctx context.Context, slug string) (string, error) {
+	slog.Debug("Geturl", "slug", slug)
+	url, err := d.rdb.Get(ctx, slug).Result()
+	if err == nil && url != "" {
+		slog.Debug("cache hit", "slug", slug, "url", url)
+		return url, nil
+	}
+
+	slog.Debug("cache miss", "slug", slug)
+	res := d.db.Raw(`SELECT long FROM urls_v1 WHERE slug = ?`, slug).Scan(&url)
 	if res.Error != nil {
 		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-			return nil, ErrNotFound
+			return "", ErrNotFound
 		}
-		return nil, res.Error
+		return "", res.Error
 	}
-	return &url_v1, nil
+
+	d.rdb.Set(ctx, slug, url, 0)
+	slog.Debug("caching", "slug", slug, "url", url)
+
+	return url, nil
 }
 
 func (d *DB) GetStats(slug string) (*models.URLStats, error) {

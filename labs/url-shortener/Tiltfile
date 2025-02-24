@@ -4,6 +4,9 @@ v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
 v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
 load('ext://go_helper', 'go_compile', 'go_image', 'go_service', 'go_job')
 
+v1alpha1.extension(name='redis', repo_name='eb', repo_path='extensions/redis')
+load('ext://redis', 'redis')
+redis()
 
 v1alpha1.extension(name='postgres', repo_name='eb', repo_path='extensions/postgres')
 load('ext://postgres', 'postgres')
@@ -27,7 +30,7 @@ go_image('api', './cmd/api')
 go_service('api',
     env_vars=env_vars,
     port_forwards=[8080],
-    resource_deps=['api-compile', 'golang-migrate'],
+    resource_deps=['api-compile', 'golang-migrate', 'redis'],
 )
 
 go_compile('cli-compile', './cmd/cli', ['./cmd/cli'])
