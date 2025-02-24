@@ -134,7 +134,8 @@ func (a *API) CreateURL_AtomicCounter(c *gin.Context) {
 
 func (a *API) Redirect(c *gin.Context) {
 	slug := c.Param("slug")
-	url, err := a.repo.GetURL(c.Request.Context(), slug)
+	cache := !c.Request.URL.Query().Has("nocache")
+	url, err := a.repo.GetURL(c.Request.Context(), slug, cache)
 	if err != nil {
 		if errors.Is(err, db.ErrNotFound) {
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": "url not found"})

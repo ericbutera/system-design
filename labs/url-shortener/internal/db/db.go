@@ -51,12 +51,16 @@ func (d *DB) GenerateSlug() (*SlugResult, error) {
 }
 
 // Fetch the long url paired with a read-through cache
-func (d *DB) GetURL(ctx context.Context, slug string) (string, error) {
+func (d *DB) GetURL(ctx context.Context, slug string, cache bool) (string, error) {
 	slog.Debug("Geturl", "slug", slug)
-	url, err := d.rdb.Get(ctx, slug).Result()
-	if err == nil && url != "" {
-		slog.Debug("cache hit", "slug", slug, "url", url)
-		return url, nil
+	var url string
+
+	if cache {
+		url, err := d.rdb.Get(ctx, slug).Result()
+		if err == nil && url != "" {
+			slog.Debug("cache hit", "slug", slug, "url", url)
+			return url, nil
+		}
 	}
 
 	slog.Debug("cache miss", "slug", slug)
@@ -68,9 +72,12 @@ func (d *DB) GetURL(ctx context.Context, slug string) (string, error) {
 		return "", res.Error
 	}
 
-	d.rdb.Set(ctx, slug, url, 0)
-	slog.Debug("caching", "slug", slug, "url", url)
+	if cache {
+		d.rdb.Set(ctx, slug, url, 0)
+		slog.Debug("caching", "slug", slug, "url", url)
+	}
 
+	slog.Debug("get url", "url", url)
 	return url, nil
 }
 

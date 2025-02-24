@@ -25,7 +25,7 @@ var (
 )
 
 func main() {
-	benchCreate(1_000)
+	benchCreate(100)
 	benchRead(1_000)
 }
 
