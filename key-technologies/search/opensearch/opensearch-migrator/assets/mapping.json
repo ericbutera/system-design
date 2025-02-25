@@ -1,0 +1,25 @@
+{
+    "settings": {
+        "number_of_shards": 1,
+        "number_of_replicas": 0
+    },
+    "mappings": {
+        "properties": {
+            "vendor_id": {
+                "type": "keyword"
+            },
+            "ip_address": {
+                "type": "ip"
+            },
+            "hostname": {
+                "type": "text"
+            },
+            "os": {
+                "type": "text"
+            },
+            "integration": {
+                "type": "keyword"
+            }
+        }
+    }
+}
