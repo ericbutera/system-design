@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consumer
+  template:
+    metadata:
+      labels:
+        app: consumer
+    spec:
+      containers:
+      - name: consumer
+        image: redpandadata/redpanda:v24.2.18
+        command: [ "rpk" ]
+        args: [ "topic", "consume", "dbz.public.urls" ]
+        env:
+        - name: RPK_BROKERS
+          value: "redpanda:9092"

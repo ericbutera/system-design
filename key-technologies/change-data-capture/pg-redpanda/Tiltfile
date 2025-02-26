@@ -1,0 +1,26 @@
+# Postgres & Redpanda CDC demo
+# Redpanda PG CDC lab: https://github.com/redpanda-data/redpanda-labs/tree/e1c3078a88df22a5c4ae73b0885a06fc54c60adc/docker-compose/cdc/postgres-json
+
+v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
+# v1alpha1.extension_repo('eb', url='https://github.com/ericbutera/tilt')
+
+v1alpha1.extension(name='redpanda', repo_name='eb', repo_path='extensions/redpanda')
+load('ext://redpanda', 'redpanda', 'redpanda_create_topics')
+redpanda()
+
+v1alpha1.extension(name='golang-migrate', repo_name='eb', repo_path='extensions/golang-migrate')
+load('ext://golang-migrate', 'golang_migrate')
+golang_migrate(
+    dsn="postgres://postgres:password@postgres:5432/postgres?sslmode=disable",
+    resource_deps=['postgres'],
+)
+
+k8s_yaml('k8s/postgres.yaml')
+k8s_resource('postgres', port_forwards=5432)
+
+k8s_yaml('k8s/consumer.yaml')
+k8s_resource('consumer', resource_deps=['debezium-create-connector'])
+
+load("debezium/Tiltfile", "debezium", "debezium_create_connector")
+debezium()
+debezium_create_connector()
