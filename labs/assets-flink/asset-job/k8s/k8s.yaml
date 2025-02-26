@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-asset-job
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flink-asset-job
+  template:
+    metadata:
+      labels:
+        app: flink-asset-job
+    spec:
+      containers:
+      - name: flink-asset-job
+        image: flink-asset-job:latest
+        envFrom:
+        - configMapRef:
+            name: assets-flink
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink-asset-job
+spec:
+  ports:
+  - port: 8081
+  selector:
+    app: flink-asset-job

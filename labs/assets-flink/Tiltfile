@@ -1,0 +1,32 @@
+load('ext://configmap', 'configmap_create', 'configmap_from_dict')
+
+v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
+# v1alpha1.extension_repo('eb', url='https://github.com/ericbutera/tilt')
+
+BROKER = "redpanda:9092"
+TOPIC = "assets"
+
+k8s_yaml(configmap_from_dict('assets-flink', inputs={
+    "TOPIC": TOPIC,
+    "BROKER": BROKER,
+    "GROUP": "asset-group-id",
+}))
+
+v1alpha1.extension(name='redpanda', repo_name='eb', repo_path='extensions/redpanda')
+load('ext://redpanda', 'redpanda', 'redpanda_create_topics')
+redpanda()
+redpanda_create_topics(['assets','vulns'])
+
+docker_build(
+    "flink-asset-job",
+    "asset-job",
+    build_args={ '--mount': 'type=volume,source=maven-repo,target=/root/.m2' }
+)
+k8s_yaml("asset-job/k8s/k8s.yaml")
+k8s_resource("flink-asset-job", resource_deps=['redpanda'])
+
+v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
+load("ext://go_helper", "go_image", "go_compile", "go_job")
+go_compile('generator-compile', './generator', ['./generator'])
+go_image('generator', './generator')
+go_job('generator', resource_deps=['redpanda'], env_vars={"TOPIC": TOPIC, "BROKER": BROKER})
