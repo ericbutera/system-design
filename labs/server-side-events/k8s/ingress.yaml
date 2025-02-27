@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sse-ingress
+  annotations:
+  nginx.ingress.kubernetes.io/rewrite-target: /
+  nginx.ingress.kubernetes.io/enable-cors: "true"
+  nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+  nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS"
+  nginx.ingress.kubernetes.io/cors-allow-headers: "Origin, Content-Type, Accept"
+  nginx.ingress.kubernetes.io/backend-protocol: "HTTP2"
+  nginx.ingress.kubernetes.io/proxy-buffering: "off"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: sws
+            port:
+              number: 80
+      - path: /events
+        pathType: Prefix
+        backend:
+          service:
+            name: app
+            port:
+              number: 8080

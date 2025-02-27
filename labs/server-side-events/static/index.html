@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gin SSE Example</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #header {
+            height: 60px;
+            background: #ccc;
+        }
+
+        #container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #events {
+            height: 50vh;
+            max-width: 800px;
+            min-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>Server-Sent Events</h1>
+    <div id="container">
+        <div id="events"></div>
+    </div>
+
+    <script>
+        const eventSource = new EventSource("/events");
+        const div = document.getElementById("events");
+        let counter = 0;
+
+        eventSource.onmessage = (event) => {
+            const data = parse(event.data);
+            log(`Message: ${counter}\n${pretty(data)}`);
+        };
+
+        eventSource.addEventListener("important", (event) => {
+            const data = parse(event.data);
+            log(`Event: ${counter}\n${pretty(data)}`);
+        });
+
+        const parse = (data) => {
+            return JSON.parse(data);
+        }
+
+        const pretty = (data) => {
+            return JSON.stringify(data, null, 2);
+        }
+
+        const log = (message) => {
+            const messageEl = document.createElement("pre");
+            messageEl.textContent = message;
+            div.prepend(messageEl)
+
+            if (counter > 10) {
+                div.removeChild(div.lastChild);
+            }
+
+            counter++;
+        }
+
+        eventSource.onerror = (err) => {
+            console.error("EventSource failed:", err);
+            eventSource.close();
+        };
+    </script>
+</body>
+</html>
