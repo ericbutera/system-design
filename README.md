@@ -22,14 +22,14 @@ Most of these projects can be ran using [tilt.dev](https://tilt.dev/).
 
 - [API Gateway](./key-technologies/api-gateway/)
 - [Blob Storage](./key-technologies/blob-storage/)
-<!-- TODO: - [Distributed Locks](./key-technologies/distributed-locks/) -->
 - [Caching](./key-technologies/caching/)
 - [Change Data Capture (CDC) - Postgres to Redpanda via Debezium](./key-technologies/change-data-capture/pg-redpanda/)
 - [Queue - Nats](./key-technologies/queue/nats/)
-<!-- TODO: - [RMDBS](./key-technologies/rmdb/) -->
 - [Search - OpenSearch](./key-technologies/search/opensearch/)
-<!-- TODO: - [Streaming](./key-technologies/streaming/) -->
 - [Timeseries Database](./key-technologies/timeseries/)
+<!-- TODO: - [Distributed Locks](./key-technologies/distributed-locks/) -->
+<!-- TODO: - [RMDBS](./key-technologies/rmdb/) -->
+<!-- TODO: - [Streaming](./key-technologies/streaming/) -->
 
 ---
 
