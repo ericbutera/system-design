@@ -1,0 +1,18 @@
+v1alpha1.extension_repo('eb', url='file:///Users/eric/code/tilt')
+# v1alpha1.extension_repo('eb', url='https://github.com/ericbutera/tilt')
+
+v1alpha1.extension(name='minio', repo_name='eb', repo_path='extensions/minio')
+load('ext://minio', 'minio')
+minio()
+
+v1alpha1.extension(name='go_helper', repo_name='eb', repo_path='extensions/go_helper')
+load('ext://go_helper', 'go_compile', 'go_image', 'go_service', 'go_job')
+
+go_compile('app-compile', '.', ['.'])
+go_image('app', '.')
+go_job('app', resource_deps=['minio'], env_vars={
+    'MINIO_URL': 'minio:9000',
+    'ACCESS_KEY_ID': 'minio',
+    'SECRET_ACCESS_KEY': 'password',
+    'BUCKET': 'bucket',
+})
